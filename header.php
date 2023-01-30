@@ -1,7 +1,7 @@
 <div class="header">
 			
 			<div class="col-md-12">
-			<img src="img/stan2.png" height="30px" width="30px" />    <font face=calibri Size=4px color=white>DATACENTER  PORTAL</font>
+			<img src="img/stan2.png" height="30px" width="30px" />    <font face=calibri Size=4px color=white> INFRASTRUCTURE PORTAL </font>
 			</div>
 			<ul class="header_menu">
                 <li class="list_icon"><a href="#">&nbsp;</a></li>

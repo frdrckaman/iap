@@ -41,7 +41,7 @@ if(!$user->isLoggedIn()) {
                                ), $user->data()->id);
                            } catch (Exception $e) {}
 
-                           Redirect::to('precaution.php');
+                           Redirect::to('dashboard.php');
                        }
                        else {
                            $usr=$override->get('user','username',Input::get('username'));
@@ -84,7 +84,7 @@ if(!$user->isLoggedIn()) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <![endif]-->
     
-    <title>DATACENTER  PORTAL</title>
+    <title> INFRASTRUCTURE PORTAL </title>
 
     <?php include 'head.php'?>
     
@@ -92,7 +92,7 @@ if(!$user->isLoggedIn()) {
 <body>
     
     <div class="loginBlock" id="login" style="display: block;">
-		<h1 align=center><?php include 'img.php'?><br><b>DATACENTER  PORTAL</b></h1>
+		<h1 align=center><?php include 'img.php'?><br><b> INFRASTRUCTURE PORTAL </b></h1>
 		<div class="dr"><span></span></div>
 		<?php if($errorMessage){?>
 			<div class="alert alert-danger">

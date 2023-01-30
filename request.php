@@ -11,33 +11,49 @@ $errorMessage = null;
 if ($user->isLoggedIn()) {
 		if (!$user->data()->power == 1){
 	    if (Input::exists('post')) {
-        if (Input::get('add_user')) {
+        if (Input::get('add_request')) {
             $validate = new validate();
             $validate = $validate->check($_POST, array(
                
                 
             ));
             if ($validate->passed()) {
-               
+                $errorM = false;
                 try {
-                    $user->createRecord('request', array(
-                        'requester_name' => Input::get('requester_name'),
-                        'requester_id' => Input::get('requester_id'),
-                        'department' => Input::get('department'),
-                        'unit' => Input::get('unit'),
-                        'visitor_name' => Input::get('visitor_name'),
-						'visitor_org' => Input::get('visitor_org'),
-						'visitor_phone' => Input::get('visitor_phone'),
-						'visitor_email' => Input::get('visitor_email'),
-						'visitor_address' => Input::get('visitor_address'),
-						'start_date' => Input::get('start_date'),
-						'start_time' => Input::get('start_time'),
-						'end_date' => Input::get('end_date'),
-						'end_time' => Input::get('end_time'),
-						'textarea' => Input::get('textarea'),
-                        'staff_id' => $user->data()->id,
-                    ));
-                    $successMessage = 'Request Created Successful';
+                    $attachment_file = Input::get('approval');
+                    if (!empty($_FILES['approval']["tmp_name"])) {
+                        $attach_file = $_FILES['approval']['type'];
+                        if ($attach_file == "application/pdf") {
+                            $folderName = 'approvals/';
+                            $attachment_file = $folderName . basename($_FILES['approval']['name']);
+                            if (@move_uploaded_file($_FILES['approval']["tmp_name"], $attachment_file)) {
+                                $file = true;
+                            } else {
+                                {
+                                    $errorM = true;
+                                    $errorMessage = 'Your Approval File Not Uploaded ,';
+                                }
+                            }
+                        } else {
+                            $errorM = true;
+                            $errorMessage = 'None supported file format';
+                        }//not supported format
+                    }else{
+                        $attachment_file = '';
+                    }
+                    if($errorM == false){
+                        $user->createRecord('computer_request', array(
+                            'name' => Input::get('name'),
+                            'employee_id' => Input::get('employee_id'),
+                            'department' => Input::get('department'),
+                            'job_title' => Input::get('job_title'),
+                            'approval_file' => Input::get('approval_file'),
+                            'comments' => Input::get('comments'),
+                            'request_date' => date('Y-m-d'),
+                            'staff_id' => $user->data()->id,
+                        ));
+                        $successMessage = 'Request Created Successful';
+                    }
                 } catch (Exception $e) {
                     die($e->getMessage());
                 }
@@ -63,7 +79,7 @@ if ($user->isLoggedIn()) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <![endif]-->
     
-    <title>DATACENTER  PORTAL</title>
+    <title> INFRASTRUCTURE PORTAL </title>
 
 	<?php include 'head.php'?>
 </head>
@@ -161,18 +177,18 @@ if ($user->isLoggedIn()) {
                                 <h1>Add Request</h1>
                             </div>
                             <div class="block-fluid">
-                                <form id="validation" method="post">
+                                <form id="validation" enctype="multipart/form-data" method="post">
 
                                     <div class="row-form clearfix">
-                                        <div class="col-md-3">Requester Name:</div>
+                                        <div class="col-md-3">Full Name:</div>
                                         <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="requester_name" id="requester_name" />
+                                            <input value="" class="validate[required]" type="text" name="name" id="name" />
                                         </div>
                                     </div>
                                     <div class="row-form clearfix">
-                                        <div class="col-md-3">Requester ID:</div>
+                                        <div class="col-md-3">Employee ID NUmber:</div>
                                         <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="requester_id" id="requester_id" />
+                                            <input value="" class="validate[required]" type="text" name="employee_id" id="employee_id" />
                                         </div>
                                     </div>
 
@@ -181,87 +197,38 @@ if ($user->isLoggedIn()) {
                                         <div class="col-md-9">
                                             <select name="department" style="width: 100%;" required>
                                                 <option value="">Select Department</option>
-                                                <option value="IT">Information Technology (IT)</option>
-                                                <option value="other">Other</option>
+                                                <?php foreach ($override->getData('department') as $department){?>
+                                                    <option value="<?=$department['id']?>"><?=$department['name']?></option>
+                                                <?php }?>
+
                                             </select>
                                         </div>
                                     </div>
 
+
                                     <div class="row-form clearfix">
-                                        <div class="col-md-3">Unit</div>
+                                        <div class="col-md-3">Job Title:</div>
                                         <div class="col-md-9">
-                                            <select name="unit" style="width: 100%;" required>
-                                                <option value="">Select Unit</option>
-                                                <option value="Application">Application</option>
-                                                <option value="Datacenter">Datacenter</option>
-                                                <option value="IT Channel">IT Channel</option>
-                                                <option value="IT Peripheral">IT Peripheral</option>
-                                                <option value="IT Security">IT Security</option>
-                                                <option value="Real Estate">Real Estate</option>
-                                                <option value="IT Infrastructure">IT Infrastructure</option>
-                                            </select>
+                                            <input value="" class="validate[required]" type="text" name="job_title" id="job_title" />
                                         </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">Visitor Name:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="visitor_name" id="visitor_name" />
-                                        </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">Visitor Organisation:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="visitor_org" id="visitor_org" />
-                                        </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">Visitor Phone Number:</div>
-                                        <div class="col-md-9"><input value="" class="" type="text" name="visitor_phone" id="phone" required /> <span>Example: 0700 000 111</span></div>
                                     </div>
 
                                     <div class="row-form clearfix">
-                                        <div class="col-md-3">Visitor Email Address:</div>
-                                        <div class="col-md-9"><input value="" class="validate[required,custom[email]]" type="text" name="visitor_email" id="email" /> <span>Example: someone@nowhere.com</span></div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">Visitor Address:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="visitor_address" id="visitor_address" />
+                                        <div class="col-md-5">Approval:</div>
+                                        <div class="col-md-7">
+                                            <input type="file" id="approval" name="approval"/>
                                         </div>
                                     </div>
+
                                     <div class="row-form clearfix">
-                                        <div class="col-md-3">Start Date:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required,custom[date]]" type="text" name="start_date" id="start_date" />
-                                        </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">Start Time:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="start_time" id="start_time" />
-                                        </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">End Date:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required,custom[date]]" type="text" name="end_date" id="end_date" />
-                                        </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">End Time:</div>
-                                        <div class="col-md-9">
-                                            <input value="" class="validate[required]" type="text" name="end_time" id="end_time" />
-                                        </div>
-                                    </div>
-                                    <div class="row-form clearfix">
-                                        <div class="col-md-3">Reasons:</div>
+                                        <div class="col-md-3">Comments:</div>
                                         <div class="col-md-9">
                                            <textarea name="textarea" placeholder="Reason for visit..."></textarea>
                                         </div>
                                     </div>
 
                                     <div class="footer tar">
-                                        <input type="submit" name="add_user" value="Submit" class="btn btn-default">
+                                        <input type="submit" name="add_request" value="Submit" class="btn btn-default">
                                     </div>
 
                                 </form>
@@ -275,6 +242,11 @@ if ($user->isLoggedIn()) {
 
         </div>   
     </div>
+        <script>
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+        </script>
 </body>
 
 </html>

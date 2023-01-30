@@ -23,7 +23,7 @@ if ($user->isLoggedIn()) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <![endif]-->
     
-    <title>DATACENTER  PORTAL</title>
+    <title> INFRASTRUCTURE PORTAL </title>
 
     <?php include 'head.php'?>
     
