@@ -18,7 +18,7 @@
                     <li><span class="glyphicon glyphicon-share-alt"></span> <a href="logout.php">Logout</a></li>
                 </ul>
                 <div class="info">
-                    <span>Welcom back! Your last visit: <?=$user->data()->last_login?></span>
+                    <span>Welcome back! Your last visit: <?=$user->data()->last_login?></span>
                 </div>
             </div>
 
@@ -45,7 +45,7 @@
                             </a>                  
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="info.php?id=2">
                                 <span class="glyphicon glyphicon-th"></span><span class="text">My Request</span>
                             </a>
                         </li>
