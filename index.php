@@ -136,6 +136,11 @@ if(!$user->isLoggedIn()) {
         </div>
 		<?php include 'sig.php'?>
     </div>
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
     
 </body>
 
