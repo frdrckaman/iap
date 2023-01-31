@@ -50,6 +50,11 @@
                             </a>
                         </li>
                         <li>
+                            <a href="info.php?id=3">
+                                <span class="glyphicon glyphicon-th"></span><span class="text">Pending Request</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="request_list.php">
                                 <span class="glyphicon glyphicon-th-large"></span><span class="text">Request List</span>
                             </a>                  
