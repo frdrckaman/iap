@@ -67,6 +67,47 @@ if ($user->isLoggedIn()) {
                         $pageError = $validate->errors();
                     }
                 }
+                elseif (Input::get('check_specs')) {
+                    print_r($_POST);
+                    $validate = $validate->check($_POST, array(
+
+                    ));
+                    if ($validate->passed()) {
+                        try {
+                            $user->createRecord('computer_specs_check', array(
+                                'brand' => Input::get('brand'),
+                                'processor' => Input::get('processor'),
+                                'ram' => Input::get('ram'),
+                                'hdd' => Input::get('hdd'),
+                                'os' => Input::get('os'),
+                                'display' => Input::get('display'),
+                                'graphic_card' => Input::get('graphic_card'),
+                                'web_cam' => Input::get('web_cam'),
+                                'battery' => Input::get('battery'),
+                                'keyboard' => Input::get('keyboard'),
+                                'wifi' => Input::get('wifi'),
+                                'mouse' => Input::get('mouse'),
+                                'warranty' => Input::get('warranty'),
+                                'other_specs' => Input::get('other_specs'),
+                                'comments' => Input::get('comments'),
+                                'check_date' => date('Y-m-d'),
+                                'staff_id' => $user->data()->id,
+                                'specs_id' => Input::get('id'),
+
+                            ));
+                            $user->updateRecord('computer_request', array(
+                                'check_status' => 1,
+                            ), Input::get('request_id'));
+                            $successMessage = 'Specs Checks Successful Added';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+                    } else {
+                        $pageError = $validate->errors();
+                    }
+                }
+            }elseif ($_GET['id'] == 4){
+
             }
         }
     }else {
@@ -627,7 +668,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">BRAND: <?=$specs['brand']?></label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="brand" type="radio" value="1"> Yes <input name="brand" type="radio" value="1"> No</label>
+                                                                            <input name="brand" type="radio" value="1"> Yes <input name="brand" type="radio" value="2" checked> No
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -637,7 +678,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">PROCESSOR: <?=$specs['processor']?></label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="processor" type="radio" value="1"> Yes <input name="processor" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="processor" type="radio" value="1"> Yes <input name="processor" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -647,7 +688,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">RAM: <?=$specs['ram']?></label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="ram" type="radio" value="1"> Yes <input name="ram" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="ram" type="radio" value="1"> Yes <input name="ram" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -657,7 +698,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">OS: <?=$specs['os']?></label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="os" type="radio" value="1"> Yes <input name="os" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="os" type="radio" value="1"> Yes <input name="os" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -667,7 +708,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">HDD: <?=$specs['hdd']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="hdd" type="radio" value="1"> Yes <input name="hdd" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="hdd" type="radio" value="1"> Yes <input name="hdd" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -677,7 +718,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">DISPLAY: <?=$specs['display']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="display" type="radio" value="1"> Yes <input name="display" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="display" type="radio" value="1"> Yes <input name="display" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -687,7 +728,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">GRAPHIC CARD: <?=$specs['graphic_card']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="graphic_card" type="radio" value="1"> Yes <input name="graphic_card" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="graphic_card" type="radio" value="1"> Yes <input name="graphic_card" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -697,7 +738,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">WEB CAM <?=$specs['web_cam']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="web_cam" type="radio" value="1"> Yes <input name="web_cam" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="web_cam" type="radio" value="1"> Yes <input name="web_cam" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -707,7 +748,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">BATTERY: <?=$specs['battery']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="battery" type="radio" value="1"> Yes <input name="battery" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="battery" type="radio" value="1"> Yes <input name="battery" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -717,7 +758,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">KEYBOARD: <?=$specs['keyboard']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="keyboard" type="radio" value="1"> Yes <input name="keyboard" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="keyboard" type="radio" value="1"> Yes <input name="keyboard" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -727,7 +768,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">MOUSE: <?=$specs['mouse']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="mouse" type="radio" value="1"> Yes <input name="mouse" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="mouse" type="radio" value="1"> Yes <input name="mouse" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -737,7 +778,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">WIFI/BLUETOOTH: <?=$specs['wifi']?></label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="wifi" type="radio" value="1"> Yes <input name="wifi" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="wifi" type="radio" value="1"> Yes <input name="wifi" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -747,7 +788,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">WARRANTY: <?=$specs['warranty']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="warranty" type="radio" value="1"> Yes <input name="warranty" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="warranty" type="radio" value="1"> Yes <input name="warranty" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -757,7 +798,7 @@ if ($user->isLoggedIn()) {
                                                                             <label class="checkbox">OTHER SPECS: <?=$specs['other_specs']?> </label>
                                                                         </div>
                                                                         <div class="form-group" style="margin-top: 5px;">
-                                                                            <label class="checkbox"><input name="other_specs" type="radio" value="1"> Yes <input name="other_specs" type="radio" value="1"> No</label>
+                                                                            <label class="checkbox"><input name="other_specs" type="radio" value="1"> Yes <input name="other_specs" type="radio" value="2"> No</label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -772,6 +813,7 @@ if ($user->isLoggedIn()) {
                                                         </div>
                                                         <div class="modal-footer">
                                                             <input type="hidden" name="id" value="<?=$specs['id']?>">
+                                                            <input type="hidden" name="request_id" value="<?=$request['id']?>">
                                                             <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
                                                             <input type="submit" class="btn btn-success" value="Submit" name="check_specs">
                                                         </div>
