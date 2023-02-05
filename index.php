@@ -18,11 +18,11 @@ if(!$user->isLoggedIn()) {
             if ($validate->passed()) { 
                 		
 				$userCheck=$override->get('user', 'username', $username);
-//					if(!$userCheck){
-//						$user->createRecord('user', array(
-//							'username' => Input::get('username'),
-//						));
-//					}
+					if(!$userCheck){
+						$user->createRecord('user', array(
+							'username' => Input::get('username'),
+						));
+					}
 //					$login = $user->ldapLogin(Input::get('username'), Input::get('password'), 'user');
                     $login = $user->loginUser(Input::get('username'), Input::get('password'), 'user');
                        if ($login) { 

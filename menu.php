@@ -1,4 +1,3 @@
-
 <div class="menu">                
 
             <div class="breadLine">            
@@ -54,8 +53,18 @@
                                 <span class="glyphicon glyphicon-th"></span><span class="text">Pending Request</span>
                             </a>
                         </li>
+						<li>
+                            <a href="info.php?id=5">
+                                <span class="glyphicon glyphicon-th"></span><span class="text">Manager Infrastructure</span>
+                            </a>
+                        </li>
+						<li>
+                            <a href="info.php?id=6">
+                                <span class="glyphicon glyphicon-th"></span><span class="text">PMU</span>
+                            </a>
+                        </li>
                         <li>
-                            <a href="request_list.php">
+                            <a href="#">
                                 <span class="glyphicon glyphicon-th-large"></span><span class="text">Request List</span>
                             </a>                  
                         </li>
@@ -67,6 +76,11 @@
                         <li>
                             <a href="add.php?id=1">
                                 <span class="glyphicon glyphicon-list"></span><span class="text">Add Department</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="add.php?id=2">
+                                <span class="glyphicon glyphicon-list"></span><span class="text">Add Staff</span>
                             </a>
                         </li>
                         <li>

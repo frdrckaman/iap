@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL ^ E_DEPRECATED);
+error_reporting(E_ERROR | E_PARSE);
 require_once 'php/core/init.php';
 $user = new User();
 $override = new OverideData();

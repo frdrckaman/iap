@@ -32,6 +32,62 @@ if ($user->isLoggedIn()) {
                         $pageError = $validate->errors();
                     }
                 }
+            }elseif ($_GET['id'] == 2){
+                try {
+                    if(!$override->get('user', 'username', strtoupper(Input::get('staff_id')))){
+                        $user->createRecord('user', array(
+                            'username' => strtoupper(Input::get('staff_id')),
+
+                        ));
+                        $successMessage = 'Staff Added Successful';
+                    }else{
+                        $errorMessage = 'Staff Already Existed';
+                    }
+
+                } catch (Exception $e) {
+                    die($e->getMessage());
+                }
+            }elseif ($_GET['id'] == 3){
+
+
+            }elseif ($_GET['id'] == 4){
+                try {
+                    if(!$override->get3('managers', 'staff_id', Input::get('staff_id'), 'department_id', Input::get('department_id'), 'unit_id', Input::get('unit_id'))){
+                        $user->createRecord('managers', array(
+                            'staff_id' => Input::get('staff_id'),
+                            'department_id' => Input::get('department_id'),
+                            'unit_id' => Input::get('unit_id'),
+                        ));
+                        $successMessage = 'Manager Added Successful';
+                    }else{
+                        $errorMessage = 'Manager Already Existed';
+                    }
+
+                } catch (Exception $e) {
+                    die($e->getMessage());
+                }
+            }elseif ($_GET['id'] == 5){
+
+            }elseif ($_GET['id'] == 6){
+
+            }elseif ($_GET['id'] == 7){
+
+            }elseif ($_GET['id'] == 8){
+
+            }elseif ($_GET['id'] == 9){
+
+            }elseif ($_GET['id'] == 10){
+
+            }elseif ($_GET['id'] == 11){
+
+            }elseif ($_GET['id'] == 12){
+
+            }elseif ($_GET['id'] == 2){
+
+            }elseif ($_GET['id'] == 2){
+
+            }elseif ($_GET['id'] == 2){
+
             }
         }
     }else {
@@ -166,6 +222,49 @@ if ($user->isLoggedIn()) {
                         </div>
 
                     </div>
+                <?php }elseif ($_GET['id'] == 2){?>
+                    <div class="col-md-offset-1 col-md-8">
+                        <div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Add Staff</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" method="post">
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">STAFF ID:</div>
+                                    <div class="col-md-9">
+                                        <input value="" class="validate[required]" type="text" name="staff_id" id="staff_id" />
+                                    </div>
+                                </div>
+
+                                <div class="footer tar">
+                                    <input type="submit" name="add_staff" value="Submit" class="btn btn-default">
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
+                <?php }elseif ($_GET['id'] == 3){?>
+
+                <?php }elseif ($_GET['id'] == 4){?>
+
+                <?php }elseif ($_GET['id'] == 5){?>
+
+                <?php }elseif ($_GET['id'] == 6){?>
+
+                <?php }elseif ($_GET['id'] == 7){?>
+
+                <?php }elseif ($_GET['id'] == 8){?>
+
+                <?php }elseif ($_GET['id'] == 9){?>
+
+                <?php }elseif ($_GET['id'] == 10){?>
+
+                <?php }elseif ($_GET['id'] == 11){?>
+
+                <?php }elseif ($_GET['id'] == 12){?>
+
                 <?php }?>
 
                 <div class="dr"><span></span></div>
