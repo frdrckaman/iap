@@ -90,26 +90,25 @@ if(!$user->isLoggedIn()) {
     
 </head>
 <body>
-    
     <div class="loginBlock" id="login" style="display: block;">
 		<h1 align=center><?php include 'img.php'?><br><b> INFRASTRUCTURE PORTAL </b></h1>
 		<div class="dr"><span></span></div>
-		<?php if($errorMessage){?>
-			<div class="alert alert-danger">
-			<h4>Error!</h4>
-			<?=$errorMessage?>
-			</div>
-			<?php }elseif($pageError){?>
-			<div class="alert alert-danger">
-			<h4>Error!</h4>
-			<?php foreach($pageError as $error){echo $error.' , ';}?>
-			</div>
-			<?php }elseif($successMessage){?>
-			<div class="alert alert-success">
-			<h4>Success!</h4>
-			<?=$successMessage?>
-			</div>
-			<?php }?>
+        <?php if($errorMessage){?>
+            <div class="alert alert-danger">
+                <h4>Error!</h4>
+                <?=$errorMessage?>
+            </div>
+        <?php }elseif($pageError){?>
+            <div class="alert alert-danger">
+                <h4>Error!</h4>
+                <?php foreach($pageError as $error){echo $error.' , ';}?>
+            </div>
+        <?php }elseif($successMessage){?>
+            <div class="alert alert-success">
+                <h4>Success!</h4>
+                <?=$successMessage?>
+            </div>
+        <?php }?>
         <div class="loginForm">
             <form class="form-horizontal" action="" method="post" id="validation"><br>
                 <div class="form-group">
@@ -132,7 +131,6 @@ if(!$user->isLoggedIn()) {
                 </div>
             </form>  
             <div class="dr"><span></span></div>
-		
         </div>
 		<?php include 'sig.php'?>
     </div>
@@ -141,7 +139,6 @@ if(!$user->isLoggedIn()) {
             window.history.replaceState(null, null, window.location.href);
         }
     </script>
-    
 </body>
 
 </html>

@@ -142,22 +142,15 @@ if ($user->isLoggedIn()) {
 
     <?php include 'menu.php'?>
 
-
-
     <div class="content">
-
-
         <div class="breadLine">
-
             <ul class="breadcrumb">
                 <li><a href="#">Simple Admin</a> <span class="divider">></span></li>
                 <li class="active">Dashboard</li>
             </ul>
-
             <ul class="buttons">
                 <li>
                     <a href="#" class="link_bcPopupList"><span class="glyphicon glyphicon-user"></span><span class="text">Users list</span></a>
-
                     <div id="bcPopupList" class="popup">
                         <div class="head clearfix">
                             <div class="arrow"></div>
@@ -165,7 +158,6 @@ if ($user->isLoggedIn()) {
                             <span class="name">List users</span>
                         </div>
                         <div class="body-fluid users">
-
                             <div class="item clearfix">
                                 <div class="image"><a href="#"><img src="img/users/aqvatarius_s.jpg" width="32"/></a></div>
                                 <div class="info">
@@ -173,7 +165,6 @@ if ($user->isLoggedIn()) {
                                     <span>online</span>
                                 </div>
                             </div>
-
                         </div>
                         <div class="footer">
                             <button class="btn btn-default" type="button">Add new</button>
@@ -184,7 +175,6 @@ if ($user->isLoggedIn()) {
                 </li>
                 <li>
                     <a href="#" class="link_bcPopupSearch"><span class="glyphicon glyphicon-search"></span><span class="text">Search</span></a>
-
                     <div id="bcPopupSearch" class="popup">
                         <div class="head clearfix">
                             <div class="arrow"></div>
@@ -201,11 +191,8 @@ if ($user->isLoggedIn()) {
                     </div>
                 </li>
             </ul>
-
         </div>
-
         <div class="workplace">
-
             <div class="row">
                 <?php if($errorMessage){?>
                     <div class="alert alert-danger">
@@ -237,14 +224,11 @@ if ($user->isLoggedIn()) {
                                         <input value="" class="validate[required]" type="text" name="name" id="name" />
                                     </div>
                                 </div>
-
                                 <div class="footer tar">
                                     <input type="submit" name="add_department" value="Submit" class="btn btn-default">
                                 </div>
-
                             </form>
                         </div>
-
                     </div>
                 <?php }elseif ($_GET['id'] == 2){?>
                     <div class="col-md-offset-1 col-md-8">
@@ -260,14 +244,11 @@ if ($user->isLoggedIn()) {
                                         <input value="" class="validate[required]" type="text" name="staff_id" id="staff_id" />
                                     </div>
                                 </div>
-
                                 <div class="footer tar">
                                     <input type="submit" name="add_staff" value="Submit" class="btn btn-default">
                                 </div>
-
                             </form>
                         </div>
-
                     </div>
                 <?php }elseif ($_GET['id'] == 3){?>
                     <div class="col-md-offset-1 col-md-8">
@@ -294,11 +275,9 @@ if ($user->isLoggedIn()) {
                                         <input value="" class="validate[required]" type="text" name="name" id="name" required/>
                                     </div>
                                 </div>
-
                                 <div class="footer tar">
                                     <input type="submit" name="add_unit" value="Submit" class="btn btn-default">
                                 </div>
-
                             </form>
                         </div>
 
@@ -344,14 +323,11 @@ if ($user->isLoggedIn()) {
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="footer tar">
                                     <input type="submit" name="add_manager" value="Submit" class="btn btn-default">
                                 </div>
-
                             </form>
                         </div>
-
                     </div>
                 <?php }elseif ($_GET['id'] == 5){?>
                     <div class="col-md-offset-1 col-md-8">
@@ -394,14 +370,11 @@ if ($user->isLoggedIn()) {
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="footer tar">
                                     <input type="submit" name="add_manager" value="Submit" class="btn btn-default">
                                 </div>
-
                             </form>
                         </div>
-
                     </div>
                 <?php }elseif ($_GET['id'] == 6){?>
 

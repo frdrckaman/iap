@@ -1,4 +1,4 @@
-<link rel="icon" type="image/ico" href="favicon.ico"/>
+    <link rel="icon" type="image/ico" href="favicon.ico"/>
     
     <link href="css/stylesheets.css" rel="stylesheet" type="text/css" />  
     <!--[if lt IE 8]>

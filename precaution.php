@@ -32,40 +32,35 @@ if ($user->isLoggedIn()) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <!--[if gt IE 8]>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <![endif]-->
-    
-    <title>DATACENTER  PORTAL</title>
-
-   <?php include 'head.php'?>
-    
-</head>
-<body>
-    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <!--[if gt IE 8]>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <![endif]-->
+        <title>INFRASTRUCTURE  PORTAL</title>
+       <?php include 'head.php'?>
+    </head>
+    <body>
     <div class="loginBlock" id="login" style="display: block;">
         <h1><b>Datacenter Precautions</b></h1>
         <div class="dr"><span></span></div>
-		<?php if($errorMessage){?>
-			<div class="alert alert-danger">
-			<h4>Error!</h4>
-			<?=$errorMessage?>
-			</div>
-			<?php }elseif($pageError){?>
-			<div class="alert alert-danger">
-			<h4>Error!</h4>
-			<?php foreach($pageError as $error){echo $error.' , ';}?>
-			</div>
-			<?php }elseif($successMessage){?>
-			<div class="alert alert-success">
-			<h4>Success!</h4>
-			<?=$successMessage?>
-			</div>
-			<?php }?>
+        <?php if($errorMessage){?>
+            <div class="alert alert-danger">
+                <h4>Error!</h4>
+                <?=$errorMessage?>
+            </div>
+        <?php }elseif($pageError){?>
+            <div class="alert alert-danger">
+                <h4>Error!</h4>
+                <?php foreach($pageError as $error){echo $error.' , ';}?>
+            </div>
+        <?php }elseif($successMessage){?>
+            <div class="alert alert-success">
+                <h4>Success!</h4>
+                <?=$successMessage?>
+            </div>
+        <?php }?>
         <div class="loginForm">
             <form class="form-horizontal" method="post" id="validation">
                 <ul>
@@ -74,7 +69,6 @@ if ($user->isLoggedIn()) {
                     <li>No bevarage is allowed in the datacenter.</li>
                     <li>No un-authorized access.</li>
                 </ul>
-
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group" style="margin-top: 5px;">
@@ -82,16 +76,14 @@ if ($user->isLoggedIn()) {
                         </div>
                     </div>
                     <div class="col-md-4 pull-right">
-						<input type="hidden" name="id" value="1">
+                        <input type="hidden" name="id" value="1">
                         <input type="submit" class="btn btn-default btn-block">
-						<!-- <a href='dashboard.html' class="btn btn-default btn-block">Submit</a> -->
+                        <!-- <a href='dashboard.html' class="btn btn-default btn-block">Submit</a> -->
                     </div>
                 </div>
             </form>
             <div class="dr"><span></span></div>
         </div>
     </div>
-    
-</body>
-
+    </body>
 </html>

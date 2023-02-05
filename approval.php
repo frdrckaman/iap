@@ -13,11 +13,8 @@ if ($user->isLoggedIn() and $user->data()->power ==1) {
         if (Input::get('approve_request')) {
             $validate = new validate();
             $validate = $validate->check($_POST, array(
-               
-                
             ));
             if ($validate->passed()) {
-               
                 try {
                     $user->updateRecord('request', array(
                         'status' => 1,
@@ -39,10 +36,7 @@ if ($user->isLoggedIn() and $user->data()->power ==1) {
 			),Input::get('id'));
             $successMessage = 'Request Declined Successful';
 		}
-			 
-            
 	}
-    
 } else {
     Redirect::to('index.php');
 }
@@ -54,13 +48,10 @@ if ($user->isLoggedIn() and $user->data()->power ==1) {
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <!--[if gt IE 8]>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <![endif]-->
-    
-    <title>Datacenter Access Portal</title>
-
+    <title>INFRASTRUCTURE Access Portal</title>
     <?php include 'head.php'?>
-    
 </head>
 <body>
     <?php include 'header.php'?>
