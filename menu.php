@@ -94,6 +94,11 @@
                                 <span class="glyphicon glyphicon-list"></span><span class="text">Manager</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="add.php?id=5">
+                                <span class="glyphicon glyphicon-list"></span><span class="text">Champions</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
