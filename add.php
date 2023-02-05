@@ -48,8 +48,18 @@ if ($user->isLoggedIn()) {
                     die($e->getMessage());
                 }
             }elseif ($_GET['id'] == 3){
+                try {
+                    $user->createRecord('unit', array(
+                            'name' => Input::get('name'),
+                        'department_id' => Input::get('department_id'),
+
+                    ));
+                    $successMessage = 'Unit Added Successful';
 
 
+                } catch (Exception $e) {
+                    die($e->getMessage());
+                }
             }elseif ($_GET['id'] == 4){
                 try {
                     if(!$override->get3('managers', 'staff_id', Input::get('staff_id'), 'department_id', Input::get('department_id'), 'unit_id', Input::get('unit_id'))){
@@ -67,7 +77,21 @@ if ($user->isLoggedIn()) {
                     die($e->getMessage());
                 }
             }elseif ($_GET['id'] == 5){
+                try {
+                    if(!$override->get3('champion', 'staff_id', Input::get('staff_id'), 'department_id', Input::get('department_id'), 'unit_id', Input::get('unit_id'))){
+                        $user->createRecord('champion', array(
+                            'staff_id' => Input::get('staff_id'),
+                            'department_id' => Input::get('department_id'),
+                            'unit_id' => Input::get('unit_id'),
+                        ));
+                        $successMessage = 'Coupa Champion Added Successful';
+                    }else{
+                        $errorMessage = 'Coupa Champion Already Existed';
+                    }
 
+                } catch (Exception $e) {
+                    die($e->getMessage());
+                }
             }elseif ($_GET['id'] == 6){
 
             }elseif ($_GET['id'] == 7){
@@ -246,9 +270,89 @@ if ($user->isLoggedIn()) {
 
                     </div>
                 <?php }elseif ($_GET['id'] == 3){?>
+                    <div class="col-md-offset-1 col-md-8">
+                        <div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Add Unit</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" method="post">
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Department:</div>
+                                    <div class="col-md-9">
+                                        <select name="department_id" id="s2_1" style="width: 100%;" required>
+                                            <option value="">Choose Department...</option>
+                                            <?php foreach ($override->getData('department') as $department){?>
+                                                <option value="<?=$department['id']?>"><?=$department['name']?></option>
+                                            <?php }?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Unit Name:</div>
+                                    <div class="col-md-9">
+                                        <input value="" class="validate[required]" type="text" name="name" id="name" required/>
+                                    </div>
+                                </div>
 
+                                <div class="footer tar">
+                                    <input type="submit" name="add_unit" value="Submit" class="btn btn-default">
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
                 <?php }elseif ($_GET['id'] == 4){?>
+                    <div class="col-md-offset-1 col-md-8">
+                        <div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Add Manager</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" method="post">
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Department:</div>
+                                    <div class="col-md-9">
+                                        <select name="department_id" id="s2_1" style="width: 100%;" required>
+                                            <option value="">Choose Department...</option>
+                                            <?php foreach ($override->getData('department') as $department){?>
+                                                <option value="<?=$department['id']?>"><?=$department['name']?></option>
+                                            <?php }?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Unit:</div>
+                                    <div class="col-md-9">
+                                        <select name="unit_id" id="s2_1" style="width: 100%;" required>
+                                            <option value="">Choose Unit...</option>
+                                            <?php foreach ($override->getData('unit') as $unit){?>
+                                                <option value="<?=$unit['id']?>"><?=$unit['name']?></option>
+                                            <?php }?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Staff ID:</div>
+                                    <div class="col-md-9">
+                                        <select name="staff_id" id="s2_1" style="width: 100%;" required>
+                                            <option value="">Choose Staff ID...</option>
+                                            <?php foreach ($override->getData('user') as $staff){?>
+                                                <option value="<?=$staff['id']?>"><?=$staff['username']?></option>
+                                            <?php }?>
+                                        </select>
+                                    </div>
+                                </div>
 
+                                <div class="footer tar">
+                                    <input type="submit" name="add_manager" value="Submit" class="btn btn-default">
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
                 <?php }elseif ($_GET['id'] == 5){?>
 
                 <?php }elseif ($_GET['id'] == 6){?>

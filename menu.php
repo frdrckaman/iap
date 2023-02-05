@@ -84,8 +84,14 @@
                             </a>
                         </li>
                         <li>
-                            <a href="info.php?id=1">
-                                <span class="glyphicon glyphicon-list"></span><span class="text">Department</span>
+                            <a href="add.php?id=3">
+                                <span class="glyphicon glyphicon-list"></span><span class="text">Add Unit</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="add.php?id=4">
+                                <span class="glyphicon glyphicon-list"></span><span class="text">Manager</span>
                             </a>
                         </li>
                     </ul>
