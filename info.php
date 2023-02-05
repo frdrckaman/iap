@@ -31,6 +31,41 @@ if ($user->isLoggedIn()) {
                         $pageError = $validate->errors();
                     }
                 }
+                elseif (Input::get('edit_unit')){
+                    try {
+                        $user->updateRecord('unit', array(
+                            'name' => Input::get('name'),
+                            'department_id' => Input::get('department_id'),
+                        ), Input::get('id'));
+                        $successMessage = 'Unit Successful Updated';
+                    } catch (Exception $e) {
+                        die($e->getMessage());
+                    }
+                }
+                elseif (Input::get('edit_manager')){
+                    try {
+                        $user->updateRecord('managers', array(
+                            'staff_id' => Input::get('staff_id'),
+                            'department_id' => Input::get('department_id'),
+                            'unit_id' => Input::get('unit_id'),
+                        ), Input::get('id'));
+                        $successMessage = 'Manager Successful Updated';
+                    } catch (Exception $e) {
+                        die($e->getMessage());
+                    }
+                }
+                elseif (Input::get('edit_champion')){
+                    try {
+                        $user->updateRecord('champion', array(
+                            'staff_id' => Input::get('staff_id'),
+                            'department_id' => Input::get('department_id'),
+                            'unit_id' => Input::get('unit_id'),
+                        ), Input::get('id'));
+                        $successMessage = 'Champion Successful Updated';
+                    } catch (Exception $e) {
+                        die($e->getMessage());
+                    }
+                }
             }elseif ($_GET['id'] == 3){
                 if (Input::get('add_specs')) {
                     $validate = $validate->check($_POST, array(
@@ -69,7 +104,6 @@ if ($user->isLoggedIn()) {
                         $pageError = $validate->errors();
                     }
                 }
-                
             }elseif ($_GET['id'] == 4){
 				if (Input::get('check_specs')) {
                    
@@ -139,7 +173,8 @@ if ($user->isLoggedIn()) {
                         } catch (Exception $e) {
                             die($e->getMessage());
                         }
-				}elseif(Input::get('receive')){
+				}
+				elseif(Input::get('receive')){
 					try {
                          $user->updateRecord('computer_request', array(
                             'pmu_receive_status' => 1,
@@ -302,6 +337,283 @@ if ($user->isLoggedIn()) {
                                                     <div class="modal-footer">
                                                         <input type="hidden" name="id" value="<?= $position['id'] ?>">
                                                         <input type="submit" name="edit_department" class="btn btn-warning" value="Save updates">
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>List of Units</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                <tr>
+                                    <th width="25%">Name</th>
+                                    <th width="25%">Department</th>
+                                    <th width="5%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($override->getData('unit') as $unit) {
+                                    $department=$override->get('department','id', $unit['department_id'])[0]?>
+                                    <tr>
+                                        <td> <?= $unit['name'] ?></td>
+                                        <td><?=$department['name']?></td>
+                                        <td><a href="#unit<?= $unit['id'] ?>" role="button" class="btn btn-info" data-toggle="modal">Edit</a></td>
+                                        <!-- EOF Bootrstrap modal form -->
+                                    </tr>
+                                    <div class="modal fade" id="unit<?= $unit['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Edit Unit Info</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Department:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="department_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$department['id']?>"><?php if($department){echo $department['name'];}else{echo 'Choose Department...';}?></option>
+                                                                        <?php foreach ($override->getData('department') as $department){?>
+                                                                            <option value="<?=$department['id']?>"><?=$department['name']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Unit Name:</div>
+                                                                <div class="col-md-9">
+                                                                    <input value="<?=$unit['name']?>" class="validate[required]" type="text" name="name" id="name" required/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="dr"><span></span></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="<?= $unit['id'] ?>">
+                                                        <input type="submit" name="edit_unit" class="btn btn-warning" value="Save updates">
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>List of Managers</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                <tr>
+                                    <th width="25%">Username</th>
+                                    <th width="25%">Department</th>
+                                    <th width="25%">Unit</th>
+                                    <th width="5%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($override->getData('managers') as $manager) {
+                                    $department=$override->get('department','id', $manager['department_id'])[0];
+                                    $unit=$override->get('unit', 'id', $manager['unit_id'])[0];
+                                    $staff=$override->get('user','id', $manager['staff_id'])[0]?>
+                                    <tr>
+                                        <td> <?= $staff['username'] ?></td>
+                                        <td><?=$department['name']?></td>
+                                        <td><?=$unit['name']?></td>
+                                        <td><a href="#manager<?= $manager['id'] ?>" role="button" class="btn btn-info" data-toggle="modal">Edit</a></td>
+                                        <!-- EOF Bootrstrap modal form -->
+                                    </tr>
+                                    <div class="modal fade" id="manager<?= $manager['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Edit Manager Info</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Department:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="department_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$department['id']?>"><?php if($department){echo $department['name'];}else{echo 'Choose Department...';}?></option>
+                                                                        <?php foreach ($override->getData('department') as $department){?>
+                                                                            <option value="<?=$department['id']?>"><?=$department['name']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Unit Name:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="unit_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$unit['id']?>"><?php if($unit){echo $unit['name'];}else{echo 'Choose Unit...';}?></option>
+                                                                        <?php foreach ($override->getData('unit') as $units){?>
+                                                                            <option value="<?=$units['id']?>"><?=$units['name']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Manager ID:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="staff_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$staff['id']?>"><?php if($manager){echo $staff['username'];}else{echo 'Choose Manager ID...';}?></option>
+                                                                        <?php foreach ($override->getData('user') as $staff){?>
+                                                                            <option value="<?=$staff['id']?>"><?=$staff['username']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="dr"><span></span></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="<?= $manager['id'] ?>">
+                                                        <input type="submit" name="edit_manager" class="btn btn-warning" value="Save updates">
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>List of Champions</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                <tr>
+                                    <th width="25%">Username</th>
+                                    <th width="25%">Department</th>
+                                    <th width="25%">Unit</th>
+                                    <th width="5%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($override->getData('champion') as $champion) {
+                                    $department=$override->get('department','id', $champion['department_id'])[0];
+                                    $unit=$override->get('unit', 'id', $champion['unit_id'])[0];
+                                    $staff=$override->get('user','id', $champion['staff_id'])[0]?>
+                                    <tr>
+                                        <td> <?=$staff['username'] ?></td>
+                                        <td><?=$department['name']?></td>
+                                        <td><?=$unit['name']?></td>
+                                        <td><a href="#champion<?= $champion['id'] ?>" role="button" class="btn btn-info" data-toggle="modal">Edit</a></td>
+                                        <!-- EOF Bootrstrap modal form -->
+                                    </tr>
+                                    <div class="modal fade" id="champion<?= $champion['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Edit Champion Info</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Department:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="department_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$department['id']?>"><?php if($department){echo $department['name'];}else{echo 'Choose Department...';}?></option>
+                                                                        <?php foreach ($override->getData('department') as $department){?>
+                                                                            <option value="<?=$department['id']?>"><?=$department['name']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Unit Name:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="unit_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$unit['id']?>"><?php if($unit){echo $unit['name'];}else{echo 'Choose Unit...';}?></option>
+                                                                        <?php foreach ($override->getData('unit') as $units){?>
+                                                                            <option value="<?=$units['id']?>"><?=$units['name']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Champion ID:</div>
+                                                                <div class="col-md-9">
+                                                                    <select name="staff_id" id="s2_1" style="width: 100%;" required>
+                                                                        <option value="<?=$staff['id']?>"><?php if($champion){echo $staff['username'];}else{echo 'Choose Champion ID...';}?></option>
+                                                                        <?php foreach ($override->getData('user') as $staff){?>
+                                                                            <option value="<?=$staff['id']?>"><?=$staff['username']?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="dr"><span></span></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="<?=$champion['id'] ?>">
+                                                        <input type="submit" name="edit_champion" class="btn btn-warning" value="Save updates">
                                                         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
                                                     </div>
                                                 </form>

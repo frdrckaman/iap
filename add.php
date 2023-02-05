@@ -313,10 +313,10 @@ if ($user->isLoggedIn()) {
                                     </div>
                                 </div>
                                 <div class="row-form clearfix">
-                                    <div class="col-md-3">Staff ID:</div>
+                                    <div class="col-md-3">Manager ID:</div>
                                     <div class="col-md-9">
                                         <select name="staff_id" id="s2_1" style="width: 100%;" required>
-                                            <option value="">Choose Staff ID...</option>
+                                            <option value="">Choose Manager ID...</option>
                                             <?php foreach ($override->getData('user') as $staff){?>
                                                 <option value="<?=$staff['id']?>"><?=$staff['username']?></option>
                                             <?php }?>
