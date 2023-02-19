@@ -66,6 +66,38 @@ if ($user->isLoggedIn()) {
                         die($e->getMessage());
                     }
                 }
+                elseif(Input::get('edit_disclaimer')){
+					try {
+                         $user->updateRecord('disclaimer', array(
+                            'name' => Input::get('name'),
+							'description' => Input::get('description'),
+							'version' => Input::get('version'),
+                         ), Input::get('id'));
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+                elseif(Input::get('activate_disclaimer')){
+					try {
+                         $user->updateRecord('disclaimer', array(
+                            'status' => 1,
+                         ), Input::get('id'));
+                         $successMessage = 'Discalamer Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+                elseif(Input::get('deactivate_disclaimer')){
+					try {
+                         $user->updateRecord('disclaimer', array(
+                            'status' => 2,
+                         ), Input::get('id'));
+                         $successMessage = 'Discalamer Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
             }elseif ($_GET['id'] == 3){
                 if (Input::get('add_specs')) {
                     $validate = $validate->check($_POST, array(
@@ -95,6 +127,7 @@ if ($user->isLoggedIn()) {
                             ));
                             $user->updateRecord('computer_request', array(
                                 'specs_status' => 1,
+								'specs_staff' => $user->data()->id,
                             ), Input::get('id'));
                             $successMessage = 'Specs Successful Added';
                         } catch (Exception $e) {
@@ -136,6 +169,8 @@ if ($user->isLoggedIn()) {
                             $user->updateRecord('computer_request', array(
                                 'check_status' => 1,
 								'check_officer' => $user->data()->id,
+								'check_date' => date('Y-m-d'),
+								'check_staff' => $user->data()->id,
                             ), Input::get('request_id'));
                             $successMessage = 'Specs Checks Successful Added';
                         } catch (Exception $e) {
@@ -160,12 +195,12 @@ if ($user->isLoggedIn()) {
                         }
 				}
 			}elseif($_GET['id'] == 6){
-				if(Input::get('pmu')){
+				if(Input::get('coupa')){
 					try {
                          $user->updateRecord('computer_request', array(
-                            'pmu_status' => 1,
-							'pmu_officer_id' => $user->data()->id,
-							'pmu_date' => date('Y-m-d'),
+                            'coupa_status' => 1,
+							'coupa_staff_id' => $user->data()->id,
+							'coupa_date' => date('Y-m-d'),
 							'po_number' => Input::get('po_no'),
 							'request_no' => Input::get('request_no'),
                          ), Input::get('id'));
@@ -187,6 +222,301 @@ if ($user->isLoggedIn()) {
                         } catch (Exception $e) {
                             die($e->getMessage());
                         }
+				}
+			}elseif($_GET['id'] == 7){
+				if(Input::get('unit_head')){
+					try {
+                         $user->updateRecord('computer_request', array(
+                            'head_unit_status' =>  Input::get('approve'),
+							'head_unit_id' => $user->data()->id,
+							'head_unit_date' => date('Y-m-d'),
+							'head_unit_comment' => Input::get('comments'),
+							
+                         ), Input::get('id'));
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}elseif(Input::get('ce_approval')){
+					$id=$override->get('off_budget','request_id',Input::get('request_id'))[0];
+					try {
+                         $user->updateRecord('off_budget', array(
+                            'description' =>  Input::get('comments'),
+							'manager_id' => $user->data()->id,
+							'manager_status' => 1,
+							'manager_date' => date('Y-m-d'),
+                         ), $id['id']);
+						 
+						 $user->updateRecord('computer_request', array(
+                            'head_unit_status' =>  1,
+							'head_unit_id' => $user->data()->id,
+							'head_unit_date' => date('Y-m-d'),
+							'head_unit_comment' => Input::get('comments'),
+                         ), Input::get('request_id'));
+						 
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+			}elseif($_GET['id'] == 8){
+				if(Input::get('ce_approve')){
+					$id=$override->get('off_budget','request_id',Input::get('request_id'))[0];
+					try {
+                         $user->updateRecord('off_budget', array(
+                            'ce_comments' =>  Input::get('comments'),
+							'ce_id' => $user->data()->id,
+							'status' => Input::get('approve'),
+							'ce_date' => date('Y-m-d'),
+                         ), Input::get('id'));
+						 
+						 $user->updateRecord('computer_request', array(
+                            'ce_approval' =>  1,
+                         ), Input::get('request_id'));
+						 
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+			}elseif($_GET['id'] == 9){
+				
+			}elseif($_GET['id'] == 10){
+				
+			}elseif($_GET['id'] == 11){
+				if(Input::get('check_quotations')){
+					try {
+                         $user->updateRecord('computer_request', array(
+							'quotation_it' => $user->data()->id,
+							'quotation_it_status' => Input::get('review'),
+							'quotation_it_comments' => Input::get('comments'),
+							'quotation_it_date' => date('Y-m-d'),
+                         ), Input::get('request_id'));
+						 
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+			}elseif($_GET['id'] == 12){
+					if (Input::get('delivery')) {
+						$validate = new validate();
+						$validate = $validate->check($_POST, array(
+					));
+					if ($validate->passed()) {
+						$errorM = false;
+						try {
+							$attachment_file = Input::get('delivery_note');
+							if (!empty($_FILES['delivery_note']["tmp_name"])) {
+								$attach_file = $_FILES['delivery_note']['type'];
+								if ($attach_file == "application/pdf") {
+									$folderName = 'delivery/';
+									$attachment_file = $folderName . basename($_FILES['delivery_note']['name']);
+									if (@move_uploaded_file($_FILES['delivery_note']["tmp_name"], $attachment_file)) {
+										$file = true;
+									} else {
+										{
+											$errorM = true;
+											$errorMessage = 'Your Delivery Note File Not Uploaded ,';
+										}
+									}
+								} else {
+									$errorM = true;
+									$errorMessage = 'None supported file format';
+								}//not supported format
+							}else{
+								$attachment_file = '';
+							}
+							
+							if($errorM == false){
+								$user->updateRecord('computer_request', array(
+									'pmu_receive_status' => Input::get('review'),
+									'pmu_receive_date' => date('Y-m-d'),
+									'pmu_receive_staff' => $user->data()->id,
+								),Input::get('request_id'));
+								
+								
+								$user->createRecord('delivery_note', array(
+									'request_id' => Input::get('request_id'),
+									'attachment' => $attachment_file,
+									'staff_id' => $user->data()->id,
+									'created_on' => date('Y-m-d'),
+								));
+								
+								$successMessage = 'Request Updated Successful';
+							}
+						} catch (Exception $e) {
+							die($e->getMessage());
+						}
+					} else {
+						$pageError = $validate->errors();
+					}
+				}
+			}elseif($_GET['id'] == 13){
+				if (Input::get('delivery')) {
+						$validate = new validate();
+						$validate = $validate->check($_POST, array(
+					));
+					if ($validate->passed()) {
+						$errorM = false;$errorM2 = false;
+						try {
+							$attachment_file = Input::get('invoice');
+							if (!empty($_FILES['invoice']["tmp_name"])) {
+								$attach_file = $_FILES['invoice']['type'];
+								if ($attach_file == "application/pdf") {
+									$folderName = 'invoice/';
+									$attachment_file = $folderName . basename($_FILES['invoice']['name']);
+									if (@move_uploaded_file($_FILES['invoice']["tmp_name"], $attachment_file)) {
+										$file = true;
+									} else {
+										{
+											$errorM = true;
+											$errorMessage = 'Your Delivery Note File Not Uploaded 111 ,';
+										}
+									}
+								} else {
+									$errorM = true;
+									$errorMessage = 'None supported file format';
+								}//not supported format
+							}else{
+								$attachment_file = '';
+							}
+							
+							
+							$attachment_file2 = Input::get('signed_delivery_note');
+							if (!empty($_FILES['signed_delivery_note']["tmp_name"])) {
+								$attach_file2 = $_FILES['signed_delivery_note']['type'];
+								if ($attach_file2 == "application/pdf") {
+									$folderName = 'signedDelivery/';
+									$attachment_file2 = $folderName . basename($_FILES['signed_delivery_note']['name']);
+									if (@move_uploaded_file($_FILES['signed_delivery_note']["tmp_name"], $attachment_file2)) {
+										$file = true;
+									} else {
+										{
+											$errorM2 = true;
+											$errorMessage = 'Your Delivery Note File Not Uploaded 222,';
+										}
+									}
+								} else {
+									$errorM2 = true;
+									$errorMessage = 'None supported file format';
+								}//not supported format
+							}else{
+								$attachment_file2 = '';
+							}
+							
+							if($errorM == false && $errorM2 == false){
+								$user->updateRecord('computer_request', array(
+									'signed_delivery_note' => Input::get('delivery_note'),
+									'invoice' => Input::get('invoice_submit'),
+								),Input::get('request_id'));
+								
+								
+								$user->createRecord('delivery_note_signed', array(
+									'request_id' => Input::get('request_id'),
+									'attachment' => $attachment_file2,
+									'staff_id' => $user->data()->id,
+									'created_on' => date('Y-m-d'),
+								));
+								
+								$user->createRecord('invoice', array(
+									'request_id' => Input::get('request_id'),
+									'attachment' => $attachment_file,
+									'staff_id' => $user->data()->id,
+									'created_on' => date('Y-m-d'),
+								));
+								
+								$successMessage = 'Request Updated Successful';
+							}
+						} catch (Exception $e) {
+							die($e->getMessage());
+						}
+					} else {
+						$pageError = $validate->errors();
+					}
+				}
+			}elseif($_GET['id'] == 14){
+				if(Input::get('add_config')){
+					try {
+                         $user->updateRecord('computer_request', array(
+							'config_staff' => $user->data()->id,
+							'config_status' => Input::get('config'),
+							'serial_no' => Input::get('serial_no'),
+							'config_date' => date('Y-m-d'),
+                         ), Input::get('request_id'));
+						 
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+			}elseif($_GET['id'] == 15){
+				
+			}elseif($_GET['id'] == 16){
+				if(Input::get('logistic')){
+					try {
+						$serial_no=$override->get('computer_request', 'id', Input::get('request_id'))[0];
+						$user->createRecord('logistic', array(
+							'recieve_asset' => Input::get('recieve_asset'),
+							'asset_tag' => Input::get('asset_tag'),
+							'old_asset' => Input::get('old_asset'),
+							'sign_register' => Input::get('sign_register'),
+							'staff_id' => $user->data()->id,
+							'request_id' => Input::get('request_id'),
+							'created_on' => date('Y-m-d'),
+                         ));
+						 
+						 $user->createRecord('assets', array(
+							'asset_type' => Input::get('asset_type'),
+							'staff_id' => Input::get('staff_id'),
+							'serial_no' => $serial_no['serial_no'],
+							'request_id' => Input::get('request_id'),
+							'period' => 4,
+                         ));
+						 $asset_id=$override->getNews('assets', 'staff_id', Input::get('staff_id'), 'request_id', Input::get('request_id'))[0];
+						 $user->createRecord('asset_history', array(
+							'staff_id' => Input::get('staff_id'),
+							'asset_id' => $asset_id['id'],
+							'start_date' => date('Y-m-d'),
+                         ));
+						
+                         $user->updateRecord('computer_request', array(
+							'logistic_status' => 1,
+                         ), Input::get('request_id'));
+						 
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+			}elseif($_GET['id'] == 17){
+				if(Input::get('end_user')){
+					try {
+                         $user->updateRecord('computer_request', array(
+							'status' => 1,
+							'receive_date' => date('Y-m-d'),
+                         ), Input::get('request_id'));
+						 
+                         $successMessage = 'Request Updated Successful';
+                        } catch (Exception $e) {
+                            die($e->getMessage());
+                        }
+				}
+			}elseif($_GET['id'] == 18){
+			}elseif($_GET['id'] == 19){
+                if(Input::get('mgt_quotations')){
+				    try {
+                        $user->updateRecord('computer_request', array(
+                            'quotation_it_manager' => $user->data()->id,
+                            'quotation_it_manager_status' => Input::get('review'),
+                            'quotation_it_manager_comments' => Input::get('comments'),
+                            'quotation_it_date' => date('Y-m-d'),
+                        ), Input::get('request_id'));
+
+                        $successMessage = 'Request Updated Successful';
+                    } catch (Exception $e) {
+                        die($e->getMessage());
+                    }
 				}
 			}
         }
@@ -625,6 +955,153 @@ if ($user->isLoggedIn()) {
                             </table>
                         </div>
                     </div>
+					<div class="col-md-12">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>List of Disclamers</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                <tr>
+                                    <th width="15%">Name</th>
+                                    <th width="45%">Descriptions</th>
+                                    <th width="5%">Version</th>
+									<th width="10%">Status</th>
+                                    <th width="20%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($override->getData('disclaimer') as $disclaimer) {?>
+                                    <tr>
+                                        <td> <?=$disclaimer['name'] ?></td>
+                                        <td><?=$disclaimer['description']?></td>
+                                        <td><?=$disclaimer['version']?></td>
+										<td>
+											<?php if($disclaimer['status'] == 1){?>
+												<a href="#" role="button" class="btn btn-success">Active</a>
+											<?php }elseif($disclaimer['status'] == 0){?>
+												<a href="#" role="button" class="btn btn-warning">Inactive</a>
+											<?php }else {?>
+												<a href="#" role="button" class="btn btn-danger">Deactivated</a>
+											<?php }?>
+										</td>
+                                        <td>
+											<a href="#disclaimer<?=$disclaimer['id'] ?>" role="button" class="btn btn-info" data-toggle="modal">Edit</a>
+											<a href="#active<?=$disclaimer['id'] ?>" role="button" class="btn btn-success" data-toggle="modal">Activate</a>
+											<a href="#deactive<?=$disclaimer['id'] ?>" role="button" class="btn btn-danger" data-toggle="modal">Deactivate</a>
+										</td>
+                                        <!-- EOF Bootrstrap modal form -->
+                                    </tr>
+                                    <div class="modal fade" id="disclaimer<?= $disclaimer['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Edit Disclamer Info</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">name:</div>
+                                                                <div class="col-md-9">
+                                                                    <input value="<?=$disclaimer['name']?>" class="validate[required]" type="text" name="name" id="name" required/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Description:</div>
+                                                                <div class="col-md-9">
+                                                                    <textarea name="description" placeholder="Description..."><?=$disclaimer['description']?></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-form clearfix">
+                                                                <div class="col-md-3">Version:</div>
+                                                                <div class="col-md-9">
+                                                                   <input value="<?=$disclaimer['version']?>" class="validate[required]" type="number" name="version" id="version" required/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="dr"><span></span></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="<?=$disclaimer['id'] ?>">
+                                                        <input type="submit" name="edit_disclaimer" class="btn btn-warning" value="Save updates">
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+									<div class="modal fade" id="active<?=$disclaimer['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Edit Disclamer Info</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+														<div class="row-form clearfix">
+															<h4 style='color: #eea236;font-weight: bold;'>Are you sure you want to activate this?</h4>
+														</div>
+                                                        <div class="dr"><span></span></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="<?=$disclaimer['id'] ?>">
+														<input type="hidden" name="status" value="1">
+                                                        <input type="submit" name="activate_disclaimer" class="btn btn-warning" value="Save updates">
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+									<div class="modal fade" id="deactive<?=$disclaimer['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Edit Disclamer Info</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+                                                            <div class="row-form clearfix">
+																<h4 style='color: #eea236;font-weight: bold;'>Are you sure you want to deactivate this?</h4>
+															</div>
+                                                            <div class="dr"><span></span></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="<?=$disclaimer['id'] ?>">
+														<input type="hidden" name="status" value="2">
+                                                        <input type="submit" name="deactivate_disclaimer" class="btn btn-warning" value="Save updates">
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 <?php }elseif ($_GET['id'] == 2){?>
                     <div class="col-md-12">
                         <div class="head clearfix">
@@ -670,7 +1147,7 @@ if ($user->isLoggedIn()) {
                                             <a href="#" role="button" class="btn <?php if($request['pmu_status']==1){echo 'btn btn-success';}else{echo 'btn btn-warning';}?> ">PMU</a>
 											<a href="#" role="button" class="btn <?php if($request['pmu_receive_status']==1){echo 'btn btn-success';}else{echo 'btn btn-warning';}?> ">Supplier</a>
                                             <a href="#" role="button" class="btn <?php if($request['check_status']==1){echo 'btn btn-success';}else{echo 'btn btn-warning';}?> ">Specs Check</a>
-                                            <a href="#" role="button" class="btn <?php if($request['receive_status']==1){echo 'btn btn-success';}else{echo 'btn btn-warning';}?> ">Receive Confirmation</a>
+                                            <a href="info.php?id=17&rid=<?=$request['id']?>" role="button" class="btn <?php if($request['receive_status']==1){echo 'btn btn-success';}else{echo 'btn btn-warning';}?> ">Receive Confirmation</a>
                                         </td>
                                     </tr>
                                     <div class="modal fade" id="view<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -856,14 +1333,16 @@ if ($user->isLoggedIn()) {
                                         <th width="10%">Employee ID</th>
                                         <th width="15%">Job title</th>
                                         <th width="10%">request date</th>
-                                        <th width="30%">Comments</th>
-                                        <th width="20%">Action</th>
+                                        <th width="20%">Comments</th>
+                                        <th width="40%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                <?php foreach($override->get('computer_request','staff_id', $user->data()->id) as $request){
+                                <?php foreach($override->get3('computer_request','status',0,'ce_approval',1,'head_unit_status',1) as $request){
                                     $checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
+									 $delivery_note=$override->get('delivery_note', 'request_id', $request['id']);
+									 if($delivery_note){$delivery=$delivery_note[0]['attachment'];}
                                     if($checkSpecs){$specs=$checkSpecs[0];}?>
                                     <tr>
                                         <td><input type="checkbox" name="checkbox" /></td>
@@ -873,8 +1352,25 @@ if ($user->isLoggedIn()) {
                                         <td><?=$request['request_date']?></td>
                                         <td><?=$request['comments']?></td>
                                         <td>
-                                            <a href="#specs<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Add Specs</a>
-                                            <a href="info.php?id=4&rid=<?=$request['id']?>" role="button" class="btn btn-info" >Specs Check</a>
+										<?php if($request['specs_status'] == 0){?>
+											<a href="#specs<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Add Specs</a>
+										<?php }?>
+										<?php if($request['quotation_it'] == 0 && $request['coupa_status'] == 1){?>
+											<a href="info.php?id=11&rid=<?=$request['id']?>" role="button" class="btn btn-warning" >Approve Quotations</a>
+										<?php }?>
+										<?php if($request['pmu_receive_status'] == 1 && $request['check_status'] == 0){?>
+											<a href="info.php?id=4&rid=<?=$request['id']?>" role="button" class="btn btn-warning" >Specs Check</a>
+										<?php }?>
+										<?php if($request['pmu_receive_status'] == 1){?>
+                                                <a href="download.php?file=<?=$delivery?>" class="btn btn-info" target="_blamk" >Delivery Note</a>
+                                        <?php } ?>
+										<?php if($request['check_status'] == 1 && $request['invoice'] == 0){?>
+                                              <a href="info.php?id=13&rid=<?=$request['id']?>" class="btn btn-warning" role="button" data-toggle="modal" >Add Invoice</a>
+                                        <?php } ?>
+										<?php if($request['invoice'] == 1 && $request['config_status'] == 0){?>
+                                              <a href="info.php?id=14&rid=<?=$request['id']?>" class="btn btn-warning" role="button" data-toggle="modal" >Device Config</a>
+                                        <?php } ?>
+											<a href="info.php?id=10&rid=<?=$request['id']?>" role="button" class="btn btn-info" >Quotations</a>
                                         </td>
                                     </tr>
                                     <div class="modal fade" id="specs<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1163,10 +1659,10 @@ if ($user->isLoggedIn()) {
                     </div>
                 <?php }elseif($_GET['id'] == 4 && $_GET['rid']){?>
 					<div class="col-md-offset-1 col-md-8">
-					<?php $specs=$override->get('computer_specs', 'request_id', $_GET['rid'])[0];?>
+					<?php $specs=$override->get('computer_specs', 'request_id', $_GET['rid'])[0];$disclamers=$override->get('disclaimer','status', 1);?>
                         <div class="head clearfix">
                             <div class="isw-ok"></div>
-                            <h1>Add Request</h1>
+                            <h1>Check Specs</h1>
                         </div>
 						<div class="block-fluid">
 							<form id="validation" enctype="multipart/form-data" method="post">
@@ -1316,6 +1812,13 @@ if ($user->isLoggedIn()) {
 										<textarea name="comments" placeholder="Additional comments..." ></textarea>
 									</div>
 								</div>
+								<?php foreach($disclamers as $disclamer){?>
+									<div class="row-form clearfix" style="color: orange; font-weight: bolder;">
+										<div class="col-md-2"><?=$disclamer['name']?> Disclamer:</div>
+										<p><?=$disclamer['description']?></p>
+									</div>
+								<?php }?>
+								
 								<div class="footer tar">
                                     <input type="hidden" name="id" value="<?=$specs['id']?>">
                                     <input type="hidden" name="request_id" value="<?=$_GET['rid']?>">
@@ -1358,7 +1861,7 @@ if ($user->isLoggedIn()) {
                                 </thead>
                                 <tbody>
 
-                                <?php foreach($override->get('computer_request','it_manager_status', 0) as $request){
+                                <?php foreach($override->get('computer_request', 'status', 0) as $request){
                                     $checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
                                     if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}?>
                                     <tr>
@@ -1370,7 +1873,13 @@ if ($user->isLoggedIn()) {
 										<td><?=$specsOfficer?></td>
                                         <td><?=$request['comments']?></td>
                                         <td>
-                                            <a href="#request<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Approve</a>
+											<?php if($request['specs_status']==1 && $request['it_manager_status']==0){?>
+												<a href="#request<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Approve Specs</a>
+											<?php }?>
+											<?php if($request['quotation_it_status'] == 1 && $request['quotation_it_manager_status']==0){?>
+												<a href="info.php?id=19&rid=<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Approve Quotation</a>
+											<?php }?>
+                                            
 											<a href="#specsView<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">View Specs</a>
                                         </td>
                                     </tr>
@@ -1526,7 +2035,7 @@ if ($user->isLoggedIn()) {
                                                             <input type="hidden" name="id" value="<?=$specs['id']?>">
                                                             <input type="hidden" name="request_id" value="<?=$request['id']?>">
                                                             <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-                                                            <input type="submit" class="btn btn-success" value="Submit" name="check_specs">
+                                                           
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1539,240 +2048,1499 @@ if ($user->isLoggedIn()) {
                         </div>
                     </div>
 				<?php }elseif($_GET['id'] == 6){?>
-				<div class="col-md-12">
-                    <div class="head clearfix">
-                        <div class="isw-grid"></div>
-                        <h1>Request Status</h1>
-                        <ul class="buttons">
-                            <li><a href="#" class="isw-download"></a></li>
-                            <li><a href="#" class="isw-attachment"></a></li>
-                            <li>
-                                <a href="#" class="isw-settings"></a>
-                                <ul class="dd-list">
-                                    <li><a href="#"><span class="isw-plus"></span> New document</a></li>
-                                    <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
-                                    <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="block-fluid">
-                        <table cellpadding="0" cellspacing="0" width="100%" class="table">
-                            <thead>
-                            <tr>
-                                <th><input type="checkbox" name="checkall" /></th>
-                                <th width="10%">Employee Name</th>
-                                <th width="10%">Employee ID</th>
-                                <th width="10%">Request Date</th>
-                                <th width="10%">PO Num</th>
-                                <th width="10%">Request Num</th>
-                                <th width="10%">Specs Officer</th>
-                                <th width="40%">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+					<div class="col-md-12">
+						<div class="head clearfix">
+							<div class="isw-grid"></div>
+							<h1>Request Status</h1>
+							<ul class="buttons">
+								<li><a href="#" class="isw-download"></a></li>
+								<li><a href="#" class="isw-attachment"></a></li>
+								<li>
+									<a href="#" class="isw-settings"></a>
+									<ul class="dd-list">
+										<li><a href="#"><span class="isw-plus"></span> New document</a></li>
+										<li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+										<li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="block-fluid">
+							<table cellpadding="0" cellspacing="0" width="100%" class="table">
+								<thead>
+								<tr>
+									<th><input type="checkbox" name="checkall" /></th>
+									<th width="10%">Employee Name</th>
+									<th width="10%">Employee ID</th>
+									<th width="10%">Request Date</th>
+									<th width="10%">PO Num</th>
+									<th width="10%">Request Num</th>
+									<th width="10%">Specs Officer</th>
+									<th width="40%">Action</th>
+								</tr>
+								</thead>
+								<tbody>
 
-                            <?php foreach($override->getNews('computer_request','it_manager_status', 1, 'pmu_receive_status', 0) as $request){
-                                $checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
-                                if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}?>
-                                <tr>
-                                    <td><input type="checkbox" name="checkbox" /></td>
-                                    <td><?=$request['name']?></td>
-                                    <td><?=$request['employee_id']?></td>
-                                    <td><?=$request['request_date']?></td>
-                                    <td><?=$request['po_number']?></td>
-                                    <td><?=$request['request_no']?></td>
-                                    <td><?=$specsOfficer?></td>
-                                    <td>
-                                        <?php if($request['pmu_status']==1){?>
-                                            <a href="#" role="button" class="btn btn-success" data-toggle="modal">Add COUPA Details</a>
-                                            <a href="#receive<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Recieve Order</a>
-                                        <?php }else{ ?>
-                                            <a href="#coupa<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Add COUPA Details</a>
-                                        <?php }?>
-											<a href="#specsViewPmu<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">View Specs</a>
-                                    </td>
-                                </tr>
-                                <div class="modal fade" id="coupa<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form method="post">
-                                            <div class="modal-content">
-                                                <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                                    <h4>Add COUPA Details</h4>
-                                                </div>
-                                                <div class="row-form clearfix">
-                                                    <div class="col-md-3">PO Number:</div>
-                                                    <div class="col-md-9">
-                                                        <input value="" class="validate[required]" type="text" name="po_no" id="po_no" />
+								<?php foreach($override->get3('computer_request','it_manager_status', 1, 'coupa_status', 0, 'status', 0) as $request){
+									$champion=$override->get('champion','department_id',$request['department'])[0];
+									if($user->data()->id == $champion['staff_id']){
+									$checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
+									if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}?>
+									<tr>
+										<td><input type="checkbox" name="checkbox" /></td>
+										<td><?=$request['name']?></td>
+										<td><?=$request['employee_id']?></td>
+										<td><?=$request['request_date']?></td>
+										<td><?=$request['po_number']?></td>
+										<td><?=$request['request_no']?></td>
+										<td><?=$specsOfficer?></td>
+										<td>
+											<?php if($request['pmu_status']==1){?>
+												<a href="#receive<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Receive Order</a>
+											<?php }else{ ?>
+												<a href="#coupa<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Add COUPA Details</a>
+											<?php }?>
+												<a href="#specsViewPmu<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">View Specs</a>
+										</td>
+									</tr>
+									<div class="modal fade" id="coupa<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Add COUPA Details</h4>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">PO Number:</div>
+														<div class="col-md-9">
+															<input value="" class="validate[required]" type="text" name="po_no" id="po_no" />
+														</div>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">Request Number:</div>
+														<div class="col-md-9">
+															<input value="" class="validate[required]" type="text" name="request_no" id="request_no" />
+														</div>
+													</div>
+													<div class="modal-footer">
+														<input type="hidden" name="id" value="<?=$request['id']?>">
+														<input type="submit" name="coupa" value="Approve" class="btn btn-success" <?php if($request['pmu_officer_id'] == 1){echo 'disabled';}else{echo '';}?>>
+														<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="modal fade" id="receive<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Receve Order</h4>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">Serial Number:</div>
+														<div class="col-md-9">
+															<input value="" class="validate[required]" type="text" name="serial_number" id="serial_number" />
+														</div>
+													</div>
+													<div class="modal-footer">
+														<input type="hidden" name="id" value="<?=$request['id']?>">
+														<input type="submit" name="receive" value="Receive" class="btn btn-success" <?php if($request['pmu_officer_id'] == 1){echo 'disabled';}else{echo '';}?>>
+														<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="modal fade" id="specsViewPmu<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Check Request</h4>
+													</div>
+													<div class="modal-body modal-body-np">
+														<div class="row">
+															<div class="block-fluid">
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BRAND: <?=$specs['brand']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">PROCESSOR: <?=$specs['processor']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">RAM: <?=$specs['ram']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OS: <?=$specs['os']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">HDD: <?=$specs['hdd']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">DISPLAY: <?=$specs['display']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">GRAPHIC CARD: <?=$specs['graphic_card']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WEB CAM <?=$specs['web_cam']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BATTERY: <?=$specs['battery']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">KEYBOARD: <?=$specs['keyboard']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">MOUSE: <?=$specs['mouse']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WIFI/BLUETOOTH: <?=$specs['wifi']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WARRANTY: <?=$specs['warranty']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OTHER SPECS: <?=$specs['other_specs']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="dr"><span></span></div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<input type="hidden" name="id" value="<?=$specs['id']?>">
+															<input type="hidden" name="request_id" value="<?=$request['id']?>">
+															<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+															
+														</div>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+								<?php }}?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+                <?php }elseif($_GET['id'] == 7){?>
+					<div class="col-md-12">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>Request Status</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" name="checkall" /></th>
+                                        <th width="10%">Employee Name</th>
+                                        <th width="5%">Employee ID</th>
+                                        <th width="15%">Job title</th>
+                                        <th width="10%">request date</th>
+										<th width="15%">Budget</th>
+                                        <th width="20%">Comments</th>
+                                        <th width="20%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                <?php foreach($override->get('computer_request','head_unit_status', 0) as $request){
+									$manager=$override->get('managers','department_id',$request['department'])[0];
+									if($user->data()->id == $manager['staff_id']){
+                                    $checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
+                                    if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}?>
+                                    <tr>
+                                        <td><input type="checkbox" name="checkbox" /></td>
+                                        <td><?=$request['name']?></td>
+                                        <td><?=$request['employee_id']?></td>
+                                        <td><?=$request['job_title']?></td>
+                                        <td><?=$request['request_date']?></td>
+										<td>
+											<?php if($request['off_budget'] == 0){?>
+												<a href="#" role="button" class="btn btn-success">Within Budget</a>
+											<?php }else{?>
+												<a href="#" role="button" class="btn btn-warning">Off Budget</a>
+												<?php if($request['ce_approval'] == 0){?>
+													<strong><p style="color:red;font-weight:bolder;">CE Approval Required</p></strong>
+												<?php }?>
+											<?php }?>
+										</td>
+                                        <td><?=$request['comments']?></td>
+                                        <td>
+											<?php if($request['ce_approval'] == 1 && $request['head_unit_status'] == 0){?>
+												<a href="#unitHeadApprove<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Approve</a>
+											<?php }else{?>
+												<a href="#unitHeadCE<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Request CE Approval</a>
+											<?php }?>
+                                        </td>
+                                    </tr>
+									<div class="modal fade" id="unitHeadApprove<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+                                            <form method="post">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Approve Request</h4>
                                                     </div>
-                                                </div>
-                                                <div class="row-form clearfix">
-                                                    <div class="col-md-3">Request Number:</div>
-                                                    <div class="col-md-9">
-                                                        <input value="" class="validate[required]" type="text" name="request_no" id="request_no" />
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <input type="hidden" name="id" value="<?=$request['id']?>">
-                                                    <input type="submit" name="pmu" value="Approve" class="btn btn-success" <?php if($request['pmu_officer_id'] == 1){echo 'disabled';}else{echo '';}?>>
-                                                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal fade" id="receive<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form method="post">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                                    <h4>Receve Order</h4>
-                                                </div>
-                                                <div class="row-form clearfix">
-                                                    <div class="col-md-3">Serial Number:</div>
-                                                    <div class="col-md-9">
-                                                        <input value="" class="validate[required]" type="text" name="serial_number" id="serial_number" />
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <input type="hidden" name="id" value="<?=$request['id']?>">
-                                                    <input type="submit" name="receive" value="Receive" class="btn btn-success" <?php if($request['pmu_officer_id'] == 1){echo 'disabled';}else{echo '';}?>>
-                                                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal fade" id="specsViewPmu<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form method="post">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                                    <h4>Check Request</h4>
-                                                </div>
-                                                <div class="modal-body modal-body-np">
-                                                    <div class="row">
-                                                        <div class="block-fluid">
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">BRAND: <?=$specs['brand']?></label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">PROCESSOR: <?=$specs['processor']?></label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">RAM: <?=$specs['ram']?></label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">OS: <?=$specs['os']?></label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">HDD: <?=$specs['hdd']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">DISPLAY: <?=$specs['display']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">GRAPHIC CARD: <?=$specs['graphic_card']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">WEB CAM <?=$specs['web_cam']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">BATTERY: <?=$specs['battery']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">KEYBOARD: <?=$specs['keyboard']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">MOUSE: <?=$specs['mouse']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">WIFI/BLUETOOTH: <?=$specs['wifi']?></label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">WARRANTY: <?=$specs['warranty']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row-form clearfix">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group" style="margin-top: 5px;">
-                                                                        <label class="checkbox">OTHER SPECS: <?=$specs['other_specs']?> </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="dr"><span></span></div>
+																
+													<div class="row-form clearfix">
+														<div class="col-md-3">Approval</div>
+														<div class="col-md-9">
+                                                            <select name="approve" style="width: 100%;" required>
+                                                                <option value="">Select</option>
+																<option value="1">Approve</option>
+																<option value="2">Reject</option>
+															</select>
+														</div>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">Comments:</div>
+                                                        <div class="col-md-9">
+                                                            <textarea name="comments" placeholder="Additional comments..."></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <input type="hidden" name="id" value="<?=$specs['id']?>">
-                                                        <input type="hidden" name="request_id" value="<?=$request['id']?>">
+                                                        <input type="hidden" name="id" value="<?=$request['id']?>">
+                                                        <input type="submit" name="unit_head" value="Approve" class="btn btn-success" <?php if($request['unit_head_status'] == 1){echo 'disabled';}else{echo '';}?>>
                                                         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-                                                        <input type="submit" class="btn btn-success" value="Submit" name="check_specs">
+                                                    </div>
+												</div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="unitHeadCE<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form method="post">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Request For CE</h4>
+                                                    </div>
+                                                    <div class="modal-body modal-body-np">
+                                                        <div class="row">
+                                                            <div class="block-fluid">
+                                                                
+                                                                <div class="row-form clearfix">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group" style="margin-top: 5px;">
+                                                                            <textarea name="comments" placeholder="Additional comments..."></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                               
+                                                                <div class="dr"><span></span></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            
+                                                            <input type="hidden" name="request_id" value="<?=$request['id']?>">
+                                                            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                            <input type="submit" name="ce_approval" class="btn btn-success" value="Submit" name="check_specs">
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            </form>
+                                        </div>
+                                    </div>
+								<?php }}?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+				<?php }elseif($_GET['id'] == 8){?>
+					<div class="col-md-12">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>Request Status</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" name="checkall" /></th>
+                                        <th width="10%">Employee Name</th>
+                                        <th width="5%">Employee</th>
+                                        <th width="15%">Job title</th>
+                                        <th width="10%">request date</th>
+										<th width="35%">Manager Description</th>
+                                        
+                                        <th width="20%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                <?php foreach($override->get('off_budget','status', 0) as $budget){
+									$manager=$override->get('managers','department_id',$budget['department'])[0];
+									$request=$override->get('computer_request', 'id', $budget['request_id'])[0];
+									
+                                    $checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
+                                    if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}?>
+                                    <tr>
+                                        <td><input type="checkbox" name="checkbox" /></td>
+                                        <td><?=$request['name']?></td>
+                                        <td><?=$request['employee_id']?></td>
+                                        <td><?=$request['job_title']?></td>
+                                        <td><?=$request['request_date']?></td>
+										<td>
+											<?=$budget['description']?>
+										</td>
+                                        
+                                        <td>
+											<a href="#CEApprove<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Approve</a>
+                                        </td>
+                                    </tr>
+									<div class="modal fade" id="CEApprove<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+                                            <form method="post">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <h4>Approve Request</h4>
+                                                    </div>
+																
+													<div class="row-form clearfix">
+														<div class="col-md-3">Approval</div>
+														<div class="col-md-9">
+                                                            <select name="approve" style="width: 100%;" required>
+                                                                <option value="">Select</option>
+																<option value="1">Approve</option>
+																<option value="2">Reject</option>
+															</select>
+														</div>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">Comments:</div>
+                                                        <div class="col-md-9">
+                                                            <textarea name="comments" placeholder="Additional comments..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="request_id" value="<?=$request['id']?>">
+														<input type="hidden" name="id" value="<?=$budget['id']?>">
+                                                        <input type="submit" name="ce_approve" value="Approve" class="btn btn-success" <?php if($request['unit_head_status'] == 1){echo 'disabled';}else{echo '';}?>>
+                                                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+												</div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+								<?php }?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+				<?php }elseif($_GET['id'] == 9){?>
+					<div class="col-md-12">
+						<div class="head clearfix">
+							<div class="isw-grid"></div>
+							<h1>Quotations Status</h1>
+							<ul class="buttons">
+								<li><a href="#" class="isw-download"></a></li>
+								<li><a href="#" class="isw-attachment"></a></li>
+								<li>
+									<a href="#" class="isw-settings"></a>
+									<ul class="dd-list">
+										<li><a href="#"><span class="isw-plus"></span> New document</a></li>
+										<li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+										<li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="block-fluid">
+							<table cellpadding="0" cellspacing="0" width="100%" class="table">
+								<thead>
+								<tr>
+									<th><input type="checkbox" name="checkall" /></th>
+									<th width="10%">Employee Name</th>
+									<th width="10%">Employee ID</th>
+									<th width="10%">Request Date</th>
+									<th width="10%">PO Num</th>
+									<th width="10%">Request Num</th>
+									<th width="10%">Specs Officer</th>
+									<th width="40%">Action</th>
+								</tr>
+								</thead>
+								<tbody>
+
+								<?php foreach($override->get3('computer_request','pmu_status', 0, 'coupa_status', 1, 'status', 0) as $request){
+									$champion=$override->get('champion','department_id',$request['department'])[0];
+									
+									$checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
+									$quatations=$override->get('quotation', 'request_id', $request['id']);
+									$delivery_note=$override->get('delivery_note', 'request_id', $request['id']);
+									if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}
+									if($quatations){$quatation=$quatations[0]['quotations'];}
+									if($delivery_note){$delivery=$delivery_note[0]['attachment'];}?>
+									<tr>
+										<td><input type="checkbox" name="checkbox" /></td>
+										<td><?=$request['name']?></td>
+										<td><?=$request['employee_id']?></td>
+										<td><?=$request['request_date']?></td>
+										<td><?=$request['po_number']?></td>
+										<td><?=$request['request_no']?></td>
+										<td><?=$specsOfficer?></td>
+										<td>
+											<?php if($request['quotation_it_status'] == 0){?>
+												<a href="add.php?id=7&rid=<?=$request['id']?>" class="btn btn-warning" >Add Quotation</a>
+											<?php }?>	
+											<?php if($request['pmu_receive_status'] == 0 && $request['quotation_it_manager_status'] == 1){?>
+												<a href="info.php?id=12&rid=<?=$request['id']?>" class="btn btn-warning" >Receive Order</a>
+											<?php } ?>
+											
+											<?php if($request['quotations_status'] == 1){?>
+												<a href="download.php?file=<?=$quatation?>" class="btn btn-info" target="_blamk" >Quotation</a>
+											<?php } ?>
+											<?php if($request['pmu_receive_status'] == 1){?>
+												<a href="download.php?file=<?=$delivery?>" class="btn btn-info" target="_blamk" >Delivery Note</a>
+											<?php } ?>
+										</td>
+									</tr>
+									<div class="modal fade" id="coupa<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Add COUPA Details</h4>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">PO Number:</div>
+														<div class="col-md-9">
+															<input value="" class="validate[required]" type="text" name="po_no" id="po_no" />
+														</div>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">Request Number:</div>
+														<div class="col-md-9">
+															<input value="" class="validate[required]" type="text" name="request_no" id="request_no" />
+														</div>
+													</div>
+													<div class="modal-footer">
+														<input type="hidden" name="id" value="<?=$request['id']?>">
+														<input type="submit" name="coupa" value="Approve" class="btn btn-success" <?php if($request['pmu_officer_id'] == 1){echo 'disabled';}else{echo '';}?>>
+														<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="modal fade" id="receive<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Receve Order</h4>
+													</div>
+													<div class="row-form clearfix">
+														<div class="col-md-3">Serial Number:</div>
+														<div class="col-md-9">
+															<input value="" class="validate[required]" type="text" name="serial_number" id="serial_number" />
+														</div>
+													</div>
+													<div class="modal-footer">
+														<input type="hidden" name="id" value="<?=$request['id']?>">
+														<input type="submit" name="receive" value="Receive" class="btn btn-success" <?php if($request['pmu_officer_id'] == 1){echo 'disabled';}else{echo '';}?>>
+														<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="modal fade" id="specsViewPmu<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Check Request</h4>
+													</div>
+													<div class="modal-body modal-body-np">
+														<div class="row">
+															<div class="block-fluid">
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BRAND: <?=$specs['brand']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">PROCESSOR: <?=$specs['processor']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">RAM: <?=$specs['ram']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OS: <?=$specs['os']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">HDD: <?=$specs['hdd']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">DISPLAY: <?=$specs['display']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">GRAPHIC CARD: <?=$specs['graphic_card']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WEB CAM <?=$specs['web_cam']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BATTERY: <?=$specs['battery']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">KEYBOARD: <?=$specs['keyboard']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">MOUSE: <?=$specs['mouse']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WIFI/BLUETOOTH: <?=$specs['wifi']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WARRANTY: <?=$specs['warranty']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OTHER SPECS: <?=$specs['other_specs']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="dr"><span></span></div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<input type="hidden" name="id" value="<?=$specs['id']?>">
+															<input type="hidden" name="request_id" value="<?=$request['id']?>">
+															<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+															
+														</div>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+								<?php }?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				<?php }elseif($_GET['id'] == 10){?>
+					<div class="col-md-6">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>List of Units</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                <tr>
+                                    <th width="25%">Name</th>
+                                    <th width="25%">File</th>
+                                    <th width="5%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($override->get('quotation', 'request_id', $_GET['rid']) as $quotation) {?>
+                                    <tr>
+                                        <td> <?= $quotation['name'] ?></td>
+                                        <td><?=$quotation['quotations']?></td>
+                                        <td><a href="download.php?file=<?=$quotation['quotations']?>" target="_blank" class="btn btn-info">Download</a></td>
+                                        <!-- EOF Bootrstrap modal form -->
+                                    </tr>
+                                    
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+				<?php }elseif($_GET['id'] == 11){$request=null;?>
+					<div class="col-md-offset-1 col-md-8">
+                        <?php
+                        $manager=$override->getNews('managers','staff_id',$user->data()->id, 'department_id', 1);
+                        $request=$override->getNews('computer_request', 'id', $_GET['rid'], 'quotation_it_status', 0)[0];
+
+                        if($request){?>
+                            <div class="head clearfix">
+                                <div class="isw-ok"></div>
+                                <h1>Review Quotations</h1>
+                            </div>
+                            <div class="block-fluid">
+                                <form id="validation" enctype="multipart/form-data" method="post">
+                                    <div class="row-form clearfix">
+                                        <div class="col-md-12">
+                                            <div class="form-group" style="margin-top: 5px;">
+                                                <label class="checkbox">Have you reviewed the Quotations to the best of your ability and your ok to allow PMU procedures to continue?</label>
                                             </div>
-                                        </form>
+                                            <div class="form-group" style="margin-top: 5px;">
+                                                <input name="review" type="radio" value="1"> Yes <input name="review" type="radio" value="2" checked> No
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row-form clearfix">
+                                        <div class="col-md-3">Comments:</div>
+                                        <div class="col-md-9">
+                                            <textarea name="comments" placeholder="Additional comments..." ></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="footer tar">
+
+                                        <input type="hidden" name="request_id" value="<?=$_GET['rid']?>">
+                                        <input type="submit" class="btn btn-success" value="Submit" name="check_quotations">
+
+                                     </div>
+                                </form>
+                            </div>
+                            </div>
+					<?php }else {?>
+						<div class="alert alert-danger">
+                            <h4>Error!</h4>
+                            This confirmation is already submitted
+                        </div>
+					<?php }?>
+				<?php }elseif($_GET['id'] == 12){?>
+					<div class="col-md-offset-1 col-md-8">
+						<?php $check_request=$override->get('computer_request','id', $_GET['rid']);if($check_request){$request=$check_request[0];if($request['pmu_receive_status'] == 0){ ?>
+					<div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Recieve Order</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" enctype="multipart/form-data" method="post">
+								
+								<div class="row-form clearfix">
+                                    <div class="col-md-3">Coupa Request No:</div>
+                                    <div class="col-md-9">
+                                        <input value="<?=$request['request_no']?>" class="validate[required]" type="text" name="name" id="name" disabled/>
                                     </div>
                                 </div>
-                            <?php }?>
-                            </tbody>
-                        </table>
+								<div class="row-form clearfix">
+                                    <div class="col-md-3">PO No:</div>
+                                    <div class="col-md-9">
+                                        <input value="<?=$request['po_number']?>" class="validate[required]" type="text" name="name" id="name" disabled/>
+                                    </div>
+                                </div>
+                                <div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you recieve the goods from supplier and handleover to IT for specs checks?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<input name="review" type="radio" value="1"> Yes <input name="review" type="radio" value="2" > No
+										</div>
+									</div>
+								</div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-5">Delivery Note:</div>
+                                    <div class="col-md-7">
+                                        <input type="file" id="delivery_note" name="delivery_note" required/>
+                                    </div>
+                                </div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Comments:</div>
+                                    <div class="col-md-9">
+                                        <textarea name="comments" placeholder="Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                                <div class="footer tar">
+									<input type="hidden" name="request_id" value="<?=$request['id']?>">
+                                    <input type="submit" name="delivery" value="Submit" class="btn btn-default">
+                                </div>
+                            </form>
+                        </div>
+						<?php }else {?>
+						<?php }}?>
+						
                     </div>
-                </div>
-                <?php }?>
+				<?php }elseif($_GET['id'] == 13){?>
+					<div class="col-md-offset-1 col-md-8">
+						<?php $check_request=$override->get('computer_request','id', $_GET['rid']);if($check_request){$request=$check_request[0];if($request['invoice'] == 0){ ?>
+					<div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Delivery Note/Invoice</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" enctype="multipart/form-data" method="post">
+
+                                <div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you signed the Delivery Note?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<input name="delivery_note" type="radio" value="1"> Yes <input name="delivery_note" type="radio" value="2" > No
+										</div>
+									</div>
+								</div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-5">Signed Delivery Note:</div>
+                                    <div class="col-md-7">
+                                        <input type="file" id="signed_delivery_note" name="signed_delivery_note" required/>
+                                    </div>
+                                </div>
+								<div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Is invoice submitted to Coupa for Finance to pay the bill?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<input name="invoice_submit" type="radio" value="1"> Yes <input name="invoice_submit" type="radio" value="2" > No
+										</div>
+									</div>
+								</div>
+								<div class="row-form clearfix">
+                                    <div class="col-md-5">Invoice:</div>
+                                    <div class="col-md-7">
+                                        <input type="file" id="invoice" name="invoice" required/>
+                                    </div>
+                                </div>
+                                <!--<div class="row-form clearfix">
+                                    <div class="col-md-3">Comments:</div>
+                                    <div class="col-md-9">
+                                        <textarea name="comments" placeholder="Additional Comments"></textarea>
+                                    </div>
+                                </div>-->
+                                <div class="footer tar">
+									<input type="hidden" name="request_id" value="<?=$request['id']?>">
+                                    <input type="submit" name="delivery" value="Submit" class="btn btn-default">
+                                </div>
+                            </form>
+                        </div>
+						<?php }else {?>
+						<?php }}?>
+						
+                    </div>
+				<?php }elseif($_GET['id'] == 14){?>
+					<div class="col-md-offset-1 col-md-8">
+						<?php $check_request=$override->get('computer_request','id', $_GET['rid']);if($check_request){$request=$check_request[0];if($request['config_status'] == 0){ ?>
+					<div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Device Configuration</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" enctype="multipart/form-data" method="post">
+
+                                <div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you configure the new device according to set standard?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<input name="config" type="radio" value="1"> Yes <input name="config" type="radio" value="2" > No
+										</div>
+									</div>
+								</div>
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Device Serial Number:</div>
+                                    <div class="col-md-9">
+                                        <input value="" class="validate[required]" type="text" name="serial_no" id="serial_no" />
+                                    </div>
+                                </div>
+								
+                               
+                                <div class="footer tar">
+									<input type="hidden" name="request_id" value="<?=$request['id']?>">
+                                    <input type="submit" name="add_config" value="Submit" class="btn btn-default">
+                                </div>
+                            </form>
+                        </div>
+						<?php }else {?>
+						<?php }}?>
+						
+                    </div>
+				<?php }elseif($_GET['id'] == 15){?>
+					<div class="col-md-12">
+						<div class="head clearfix">
+							<div class="isw-grid"></div>
+							<h1>Quotations Status</h1>
+							<ul class="buttons">
+								<li><a href="#" class="isw-download"></a></li>
+								<li><a href="#" class="isw-attachment"></a></li>
+								<li>
+									<a href="#" class="isw-settings"></a>
+									<ul class="dd-list">
+										<li><a href="#"><span class="isw-plus"></span> New document</a></li>
+										<li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+										<li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="block-fluid">
+							<table cellpadding="0" cellspacing="0" width="100%" class="table">
+								<thead>
+								<tr>
+									<th><input type="checkbox" name="checkall" /></th>
+									<th width="10%">Employee Name</th>
+									<th width="10%">Employee ID</th>
+									<th width="10%">Request Date</th>
+									<th width="10%">PO Num</th>
+									<th width="10%">Request Num</th>
+									<th width="10%">Specs Officer</th>
+									<th width="40%">Action</th>
+								</tr>
+								</thead>
+								<tbody>
+
+								<?php foreach($override->getNews('computer_request', 'pmu_receive_status', 1, 'status', 0) as $request){
+									$champion=$override->get('champion','department_id',$request['department'])[0];
+									
+									$checkSpecs=$override->get('computer_specs', 'request_id', $request['id']);
+									$quatations=$override->get('quotation', 'request_id', $request['id']);
+									$delivery_note=$override->get('delivery_note', 'request_id', $request['id']);
+									if($checkSpecs){$specs=$checkSpecs[0];$specsOfficer=$override->get('user', 'id', $specs['staff_id'])[0]['username'];}
+									if($quatations){$quatation=$quatations[0]['quotations'];}
+									if($delivery_note){$delivery=$delivery_note[0]['attachment'];}?>
+									<tr>
+										<td><input type="checkbox" name="checkbox" /></td>
+										<td><?=$request['name']?></td>
+										<td><?=$request['employee_id']?></td>
+										<td><?=$request['request_date']?></td>
+										<td><?=$request['po_number']?></td>
+										<td><?=$request['request_no']?></td>
+										<td><?=$specsOfficer?></td>
+										<td>
+											
+											<?php if($request['quotations_status'] == 1){?>
+												<a href="download.php?file=<?=$quatation?>" class="btn btn-info" target="_blamk" >Quotation</a>
+											<?php } ?>
+											<?php if($request['pmu_receive_status'] == 1){?>
+												<a href="download.php?file=<?=$delivery?>" class="btn btn-info" target="_blamk" >Delivery Note</a>
+											<?php } ?>
+											
+											<?php if($request['config_status'] == 1 && $request['logistic_status'] == 0){?>
+												<a href="info.php?id=16&rid=<?=$request['id']?>" class="btn btn-warning" >Asset Transfer </a>
+											<?php } ?>
+											
+										</td>
+									</tr>
+								
+									<div class="modal fade" id="specsViewPmu<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>Check Request</h4>
+													</div>
+													<div class="modal-body modal-body-np">
+														<div class="row">
+															<div class="block-fluid">
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BRAND: <?=$specs['brand']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">PROCESSOR: <?=$specs['processor']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">RAM: <?=$specs['ram']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OS: <?=$specs['os']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">HDD: <?=$specs['hdd']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">DISPLAY: <?=$specs['display']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">GRAPHIC CARD: <?=$specs['graphic_card']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WEB CAM <?=$specs['web_cam']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BATTERY: <?=$specs['battery']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">KEYBOARD: <?=$specs['keyboard']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">MOUSE: <?=$specs['mouse']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WIFI/BLUETOOTH: <?=$specs['wifi']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WARRANTY: <?=$specs['warranty']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OTHER SPECS: <?=$specs['other_specs']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="dr"><span></span></div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<input type="hidden" name="id" value="<?=$specs['id']?>">
+															<input type="hidden" name="request_id" value="<?=$request['id']?>">
+															<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+															
+														</div>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+								<?php }?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				<?php }elseif($_GET['id'] == 16){?>
+					<div class="col-md-offset-1 col-md-8">
+					<?php $specs=$override->get('computer_specs', 'request_id', $_GET['rid'])[0];$disclamers=$override->get('disclaimer','status', 1);
+					$request=$override->get('computer_request', 'id', $_GET['rid'])[0];
+					if($request['config_status'] == 1 && $request['logistic_status'] == 0){?>
+					
+                        <div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Check Specs</h1>
+                        </div>
+						<div class="block-fluid">
+							<form id="validation" enctype="multipart/form-data" method="post">
+								<div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you recieve the new device from infrastructure team?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<input name="recieve_asset" type="radio" value="1"> Yes <input name="recieve_asset" type="radio" value="2" checked> No
+										</div>
+									</div>
+								</div>
+								<div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you place the Asset tag into a new device?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox"><input name="asset_tag" type="radio" value="1"> Yes <input name="asset_tag" type="radio" value="2"> No</label>
+										</div>
+									</div>
+								</div>
+								<div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you collect the old asset from user?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox"><input name="old_asset" type="radio" value="1"> Yes <input name="old_asset" type="radio" value="2"> No</label>
+										</div>
+									</div> 
+								</div>
+								<div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Did the user sign the physical register for return the old asset and receiving the new asset?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox"><input name="sign_register" type="radio" value="1"> Yes <input name="sign_register" type="radio" value="2"> No</label>
+										</div>
+									</div>
+								</div>
+								<div class="row-form clearfix">
+                                    <div class="col-md-3">Staff ID:</div>
+                                    <div class="col-md-9">
+                                        <select name="staff_id" id="s2_1" style="width: 100%;" required>
+                                            <option value="">Choose Staff...</option>
+                                            <?php foreach ($override->getData('user') as $staff){?>
+                                                <option value="<?=$staff['id']?>"><?=$staff['username']?></option>
+                                            <?php }?>
+                                        </select>
+                                    </div>
+                                </div>
+								<div class="row-form clearfix">
+                                    <div class="col-md-3">Asset Type:</div>
+                                    <div class="col-md-9">
+                                        <select name="asset_type" style="width: 100%;" required>
+                                            <option value="">Choose type...</option>
+                                            <?php foreach ($override->getData('assets_type') as $type){?>
+                                                <option value="<?=$type['id']?>"><?=$type['name']?></option>
+                                            <?php }?>
+                                        </select>
+                                    </div>
+                                </div>
+
+								<div class="footer tar">
+                                    <input type="hidden" name="id" value="<?=$specs['id']?>">
+                                    <input type="hidden" name="request_id" value="<?=$_GET['rid']?>">
+                                    <input type="submit" class="btn btn-success" value="Submit" name="logistic">
+                                 </div>
+							</form>
+						</div>
+					</div>
+					<?php }?>
+				<?php }elseif($_GET['id'] == 17){?>
+					<div class="col-md-offset-1 col-md-8">
+					<?php $request=$override->get('computer_request', 'id', $_GET['rid'])[0];$disclamers=$override->get('disclaimer','status', 1);if($request['status'] == 0 && $request['logistic_status'] == 1){?>
+                        <div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Recieve New Asset</h1>
+                        </div>
+						<div class="block-fluid">
+							<form id="validation" enctype="multipart/form-data" method="post">
+								<div class="row-form clearfix">
+									<div class="col-md-12">
+										<div class="form-group" style="margin-top: 5px;">
+											<label class="checkbox">Have you recieve the new Asset from logistic?</label>
+										</div>
+										<div class="form-group" style="margin-top: 5px;">
+											<input name="recieve_asset" type="radio" value="1"> Yes <input name="recieve_asset" type="radio" value="2" checked> No
+										</div>
+									</div>
+								</div>
+								
+
+								<div class="footer tar">
+                                    <input type="hidden" name="id" value="<?=$request['id']?>">
+                                    <input type="hidden" name="request_id" value="<?=$request['id']?>">
+                                    <input type="submit" class="btn btn-success" value="Submit" name="end_user">
+                                 </div>
+							</form>
+						</div>
+					</div>
+					<?php }?>
+				<?php }elseif($_GET['id'] == 18){?>
+					<div class="col-md-12">
+                        <div class="head clearfix">
+                            <div class="isw-grid"></div>
+                            <h1>List of Assets</h1>
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-download"></a></li>
+                                <li><a href="#" class="isw-attachment"></a></li>
+                                <li>
+                                    <a href="#" class="isw-settings"></a>
+                                    <ul class="dd-list">
+                                        <li><a href="#"><span class="isw-plus"></span> New document</a></li>
+                                        <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
+                                        <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="block-fluid">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                                <thead>
+                                <tr>
+                                    <th width="10%">Asset Type</th>
+                                    <th width="10%">Serial No</th>
+                                    <th width="10%">Current User</th>
+									<th width="10%">End of Life in</th>
+									<th width="50%">Specs Summary</th>
+                                    <th width="10%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($override->getData('assets') as $asset) {
+									$asset_type=$override->get('assets_type', 'id', $asset['asset_type'])[0];
+									$staff=$override->get('user', 'id', $asset['staff_id'])[0];
+									$commissionDate=$override->get('logistic', 'request_id', $asset['request_id'])[0]['created_on'];
+									$endOfLifeDate=date('Y-m-d', strtotime($commissionDate. ' + '.$asset['period'].' year'));
+									$specs=$override->get('computer_specs', 'request_id', $asset['request_id'])[0];
+									
+									$endOfLifeDays=$user->dateDiffNoFormat(date('Y-m-d'),$endOfLifeDate);?>
+                                    <tr>
+                                        <td><?=$asset_type['name'] ?></td>
+                                        <td><?=$asset['serial_no']?></td>
+                                        <td><?=$staff['username']?></td>
+										
+										<td>
+											<?php if($endOfLifeDays > 365){?>
+												<a href="#" role="button" class="btn btn-success"><?=number_format($endOfLifeDays)?> Days</a>
+											<?php }elseif($endOfLifeDays < 365){?>
+												<a href="#" role="button" class="btn btn-warning"><?=number_format($endOfLifeDays)?> Days</a>
+											<?php }else {?>
+												<a href="#" role="button" class="btn btn-danger"><?=number_format($endOfLifeDays)?> Days</a>
+											<?php }?>
+										</td>
+										<td><strong>Brand:</strong> <?=$specs['brand']?>, <strong>Processor:</strong> <?=$specs['processor']?>, <strong>Ram:</strong> <?=$specs['ram']?>. <strong>HDD:</strong> <?=$specs['hdd']?></td>
+                                        <td>
+											<a href="#specs<?=$specs['id'] ?>" role="button" class="btn btn-info" data-toggle="modal">View Specs</a>
+											
+										</td>
+                                        
+                                    </tr>
+                                    
+									<div class="modal fade" id="specs<?=$specs['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<form method="post">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4>View Specs</h4>
+													</div>
+													<div class="modal-body modal-body-np">
+														<div class="row">
+															<div class="block-fluid">
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BRAND: <?=$specs['brand']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">PROCESSOR: <?=$specs['processor']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">RAM: <?=$specs['ram']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OS: <?=$specs['os']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">HDD: <?=$specs['hdd']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">DISPLAY: <?=$specs['display']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">GRAPHIC CARD: <?=$specs['graphic_card']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WEB CAM <?=$specs['web_cam']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">BATTERY: <?=$specs['battery']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">KEYBOARD: <?=$specs['keyboard']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">MOUSE: <?=$specs['mouse']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WIFI/BLUETOOTH: <?=$specs['wifi']?></label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">WARRANTY: <?=$specs['warranty']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="row-form clearfix">
+																	<div class="col-md-12">
+																		<div class="form-group" style="margin-top: 5px;">
+																			<label class="checkbox">OTHER SPECS: <?=$specs['other_specs']?> </label>
+																		</div>
+																	</div>
+																</div>
+																<div class="dr"><span></span></div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<input type="hidden" name="id" value="<?=$specs['id']?>">
+															<input type="hidden" name="request_id" value="<?=$asset['request_id']?>">
+															<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+															
+														</div>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+				<?php }elseif($_GET['id'] == 19){?>
+                    <div class="col-md-offset-1 col-md-8">
+                    <?php
+                    $manager=$override->getNews('managers','staff_id',$user->data()->id, 'department_id', 1);
+                    $request=$override->getNews('computer_request', 'id', $_GET['rid'], 'quotation_it_manager_status', 0)[0];
+                    if($request){
+                    ?>
+                        <div class="head clearfix">
+                            <div class="isw-ok"></div>
+                            <h1>Review Quotations</h1>
+                        </div>
+                        <div class="block-fluid">
+                            <form id="validation" enctype="multipart/form-data" method="post">
+                                <div class="row-form clearfix">
+                                    <div class="col-md-12">
+                                        <div class="form-group" style="margin-top: 5px;">
+                                            <label class="checkbox">Have you reviewed the Quotations to the best of your ability and your ok to allow PMU procedures to continue?</label>
+                                        </div>
+                                        <div class="form-group" style="margin-top: 5px;">
+                                            <input name="review" type="radio" value="1"> Yes <input name="review" type="radio" value="2" checked> No
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row-form clearfix">
+                                    <div class="col-md-3">Comments:</div>
+                                    <div class="col-md-9">
+                                        <textarea name="comments" placeholder="Additional comments..." ></textarea>
+                                    </div>
+                                </div>
+                                <div class="footer tar">
+
+                                    <input type="hidden" name="request_id" value="<?=$_GET['rid']?>">
+                                    <input type="submit" class="btn btn-success" value="Submit" name="mgt_quotations">
+
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                    <?php }else {?>
+                        <div class="alert alert-danger">
+                            <h4>Error!</h4>
+                            This confirmation is already submitted
+                        </div>
+                    <?php }?>
+				<?php }elseif($_GET['id'] == 20){?>
+				<?php }?>
                 <div class="dr"><span></span></div>
             </div>
         </div>

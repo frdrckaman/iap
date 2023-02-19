@@ -6,7 +6,7 @@ $GLOBALS['config'] = array(
       'host' => 'localhost',
       'username' => '',
       'password' => '',
-      'db' => 'iap1'
+      'db' => 'ptziap'
   	),
   'remember' =>array(
       'cookie_name' => 'hash',

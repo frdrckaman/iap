@@ -61,7 +61,21 @@ class OverideData{
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
-
+	public function get4($table,$where,$id,$where2,$id2,$where3,$id3,$where4,$id4){
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE $where = '$id' AND $where2 = '$id2' AND $where3 = '$id3' AND $where4 = '$id4'");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+	public function get5($table,$where,$id,$where2,$id2,$where3,$id3,$where4,$id4,$where5,$id5){
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE $where = '$id' AND $where2 = '$id2' AND $where3 = '$id3' AND $where4 = '$id4' AND $where5 = '$id5'");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+	public function get6($table,$where,$id,$where2,$id2,$where3,$id3,$where4,$id4,$where5,$id5,$where6,$id6){
+        $query = $this->_pdo->query("SELECT * FROM $table WHERE $where = '$id' AND $where2 = '$id2' AND $where3 = '$id3' AND $where4 = '$id4' AND $where5 = '$id5' AND $where6 = '$id6'");
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
     public function getSumD($table,$variable){
         $query = $this->_pdo->query("SELECT SUM($variable) FROM $table");
         $result = $query->fetchAll(PDO::FETCH_ASSOC);

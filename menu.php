@@ -44,9 +44,19 @@
                         <span class="glyphicon glyphicon-th"></span><span class="text">My Request</span>
                     </a>
                 </li>
-                <li>
+				<li>
                     <a href="info.php?id=3">
-                        <span class="glyphicon glyphicon-th"></span><span class="text">Pending Request</span>
+                        <span class="glyphicon glyphicon-th"></span><span class="text">IT Specialist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="info.php?id=7">
+                        <span class="glyphicon glyphicon-th"></span><span class="text">Head of Unit</span>
+                    </a>
+                </li>
+				 <li>
+                    <a href="info.php?id=8">
+                        <span class="glyphicon glyphicon-th"></span><span class="text">CE</span>
                     </a>
                 </li>
                 <li>
@@ -56,7 +66,17 @@
                 </li>
                 <li>
                     <a href="info.php?id=6">
+                        <span class="glyphicon glyphicon-th"></span><span class="text">Cuopa Champion</span>
+                    </a>
+                </li>
+				<li>
+                    <a href="info.php?id=9">
                         <span class="glyphicon glyphicon-th"></span><span class="text">PMU</span>
+                    </a>
+                </li>
+				<li>
+                    <a href="info.php?id=15">
+                        <span class="glyphicon glyphicon-th"></span><span class="text">Logistic</span>
                     </a>
                 </li>
                 <li>
@@ -64,6 +84,22 @@
                         <span class="glyphicon glyphicon-th-large"></span><span class="text">Request List</span>
                     </a>
                 </li>
+            </ul>
+        </li>
+		<li class="openable">
+            <a href="#"><span class="isw-tag"></span><span class="text">Assets</span></a>
+            <ul>
+                <li>
+                    <a href="add.php?id=8">
+                        <span class="glyphicon glyphicon-list"></span><span class="text">Computer Transfer</span>
+                    </a>
+                </li>
+				<li>
+                    <a href="info.php?id=18">
+                        <span class="glyphicon glyphicon-list"></span><span class="text">View Assets</span>
+                    </a>
+                </li>
+                
             </ul>
         </li>
         <li class="openable">
@@ -92,6 +128,11 @@
                 <li>
                     <a href="add.php?id=5">
                         <span class="glyphicon glyphicon-list"></span><span class="text">Champions</span>
+                    </a>
+                </li>
+				<li>
+                    <a href="add.php?id=6">
+                        <span class="glyphicon glyphicon-list"></span><span class="text">Disclamer</span>
                     </a>
                 </li>
                 <li>

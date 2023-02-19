@@ -41,17 +41,27 @@ if ($user->isLoggedIn()) {
                     }else{
                         $attachment_file = '';
                     }
+					 $errorM = false;
                     if($errorM == false){
+						$checkBudget=$override->get('schedule_pc','staff_username', Input::get('employee_id'));
+						if(!$checkBudget){$offBudget=1;$ce=0;}else{$offBudget=0;$ce=1;}
                         $user->createRecord('computer_request', array(
                             'name' => Input::get('name'),
                             'employee_id' => Input::get('employee_id'),
                             'department' => Input::get('department'),
                             'job_title' => Input::get('job_title'),
-                            'approval_file' => Input::get('approval_file'),
                             'comments' => Input::get('comments'),
+							'off_budget' => $offBudget,
+							'ce_approval' => $ce,
                             'request_date' => date('Y-m-d'),
                             'staff_id' => $user->data()->id,
                         ));
+						if(!$checkBudget){
+							$rq=$override->getlastRow('computer_request','employee_id',Input::get('employee_id'),'id')[0];
+							$user->createRecord('off_budget', array(
+                            'request_id' => $rq['id'],
+                        ));
+						}
                         $successMessage = 'Request Created Successful';
                     }
                 } catch (Exception $e) {
@@ -192,16 +202,16 @@ if ($user->isLoggedIn()) {
                                         <input value="" class="validate[required]" type="text" name="job_title" id="job_title" />
                                     </div>
                                 </div>
-                                <div class="row-form clearfix">
+                                <!-- <div class="row-form clearfix">
                                     <div class="col-md-5">Approval:</div>
                                     <div class="col-md-7">
                                         <input type="file" id="approval" name="approval"/>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="row-form clearfix">
                                     <div class="col-md-3">Comments:</div>
                                     <div class="col-md-9">
-                                        <textarea name="textarea" placeholder="Reason for visit..."></textarea>
+                                        <textarea name="comments" placeholder="Reason for visit..."></textarea>
                                     </div>
                                 </div>
                                 <div class="footer tar">

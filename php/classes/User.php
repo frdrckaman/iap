@@ -48,6 +48,11 @@ class User {
         $date = strtotime($endDate) - strtotime($startDate);
         return number_format($date/86400);
     }
+	
+	function dateDiffNoFormat($startDate,$endDate){
+        $date = strtotime($endDate) - strtotime($startDate);
+        return ($date/86400);
+    }
 
     function dateDiffYears($startDate,$endDate){
         $date = abs(strtotime($endDate) - strtotime($startDate));
