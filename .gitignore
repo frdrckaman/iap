@@ -18,7 +18,7 @@ signedDelivery/
 invoice/
 delivery/
 
-php/core/
+php/core/init.php
 
 # AWS User-specific
 .idea/**/aws.xml
