@@ -19,6 +19,7 @@ $GLOBALS['config'] = array(
   	 )
 );
 
+date_default_timezone_set("Africa/Nairobi");
 spl_autoload_register(function($class){
 	require_once 'php/classes/'.$class.'.php';
 });
