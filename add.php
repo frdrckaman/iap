@@ -105,7 +105,7 @@ if ($user->isLoggedIn()) {
                     die($e->getMessage());
                 }
             }elseif ($_GET['id'] == 7){
-				if (Input::get('add_quotations')) {echo 'Jesus';
+				if (Input::get('add_quotations')) {
 						$validate = new validate();
 						$validate = $validate->check($_POST, array(
 					));

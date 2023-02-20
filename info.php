@@ -493,7 +493,8 @@ if ($user->isLoggedIn()) {
 				if(Input::get('end_user')){
 					try {
                          $user->updateRecord('computer_request', array(
-							'status' => 1,
+                                 'receive_status' => Input::get('recieve_asset'),
+                             'status' => 1,
 							'receive_date' => date('Y-m-d'),
                          ), Input::get('request_id'));
 						 
@@ -1352,25 +1353,28 @@ if ($user->isLoggedIn()) {
                                         <td><?=$request['request_date']?></td>
                                         <td><?=$request['comments']?></td>
                                         <td>
-										<?php if($request['specs_status'] == 0){?>
-											<a href="#specs<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Add Specs</a>
-										<?php }?>
-										<?php if($request['quotation_it'] == 0 && $request['coupa_status'] == 1){?>
-											<a href="info.php?id=11&rid=<?=$request['id']?>" role="button" class="btn btn-warning" >Approve Quotations</a>
-										<?php }?>
-										<?php if($request['pmu_receive_status'] == 1 && $request['check_status'] == 0){?>
-											<a href="info.php?id=4&rid=<?=$request['id']?>" role="button" class="btn btn-warning" >Specs Check</a>
-										<?php }?>
-										<?php if($request['pmu_receive_status'] == 1){?>
-                                                <a href="download.php?file=<?=$delivery?>" class="btn btn-info" target="_blamk" >Delivery Note</a>
-                                        <?php } ?>
-										<?php if($request['check_status'] == 1 && $request['invoice'] == 0){?>
-                                              <a href="info.php?id=13&rid=<?=$request['id']?>" class="btn btn-warning" role="button" data-toggle="modal" >Add Invoice</a>
-                                        <?php } ?>
-										<?php if($request['invoice'] == 1 && $request['config_status'] == 0){?>
-                                              <a href="info.php?id=14&rid=<?=$request['id']?>" class="btn btn-warning" role="button" data-toggle="modal" >Device Config</a>
-                                        <?php } ?>
-											<a href="info.php?id=10&rid=<?=$request['id']?>" role="button" class="btn btn-info" >Quotations</a>
+                                            <?php if($request['specs_status'] == 0){?>
+                                                <a href="#specs<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Add Specs</a>
+                                            <?php }?>
+                                            <?php if($request['quotation_it'] == 0 && $request['coupa_status'] == 1){?>
+                                                <a href="info.php?id=11&rid=<?=$request['id']?>" role="button" class="btn btn-warning" >Approve Quotations</a>
+                                            <?php }?>
+                                            <?php if($request['check_status'] == 1 && $request['invoice'] == 0){?>
+                                                <a href="info.php?id=13&rid=<?=$request['id']?>" class="btn btn-warning" role="button" data-toggle="modal" >Add Invoice</a>
+                                            <?php } ?>
+                                            <?php if($request['invoice'] == 1 && $request['config_status'] == 0){?>
+                                                <a href="info.php?id=14&rid=<?=$request['id']?>" class="btn btn-warning" role="button" data-toggle="modal" >Device Config</a>
+                                            <?php } ?>
+                                            <?php if($request['pmu_receive_status'] == 1 && $request['check_status'] == 0){?>
+                                                <a href="info.php?id=4&rid=<?=$request['id']?>" role="button" class="btn btn-warning" >Specs Check</a>
+                                            <?php }?>
+                                            <?php if($request['pmu_receive_status'] == 1){?>
+                                                    <a href="download.php?file=<?=$delivery?>" class="btn btn-info" target="_blamk" >Delivery Note</a>
+                                            <?php } ?>
+                                            <?php if($request['quotations_status'] == 1){?>
+                                                <a href="info.php?id=10&rid=<?=$request['id']?>" role="button" class="btn btn-info" >Quotations</a>
+                                            <?php }?>
+
                                         </td>
                                     </tr>
                                     <div class="modal fade" id="specs<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1659,7 +1663,8 @@ if ($user->isLoggedIn()) {
                     </div>
                 <?php }elseif($_GET['id'] == 4 && $_GET['rid']){?>
 					<div class="col-md-offset-1 col-md-8">
-					<?php $specs=$override->get('computer_specs', 'request_id', $_GET['rid'])[0];$disclamers=$override->get('disclaimer','status', 1);?>
+					<?php $specs=$override->get('computer_specs', 'request_id', $_GET['rid'])[0];$disclamers=$override->get('disclaimer','status', 1);
+					$request=$override->get('computer_request', 'id', $_GET['rid'])[0]?>
                         <div class="head clearfix">
                             <div class="isw-ok"></div>
                             <h1>Check Specs</h1>
@@ -1822,7 +1827,7 @@ if ($user->isLoggedIn()) {
 								<div class="footer tar">
                                     <input type="hidden" name="id" value="<?=$specs['id']?>">
                                     <input type="hidden" name="request_id" value="<?=$_GET['rid']?>">
-                                    <input type="submit" class="btn btn-success" value="Submit" name="check_specs">
+                                    <input type="submit" class="btn btn-success" value="Submit" name="check_specs" <?php if($request['check_status']==1){echo 'disabled';}?>>
                                  </div>
 							</form>
 						</div>
@@ -1852,11 +1857,11 @@ if ($user->isLoggedIn()) {
                                         <th><input type="checkbox" name="checkall" /></th>
                                         <th width="10%">Employee Name</th>
                                         <th width="10%">Employee ID</th>
-                                        <th width="15%">Job title</th>
+                                        <th width="10%">Job title</th>
                                         <th width="10%">request date</th>
                                         <th width="10%">Specs Officer</th>
                                         <th width="20%">Comments</th>
-                                        <th width="20%">Action</th>
+                                        <th width="30%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1879,6 +1884,10 @@ if ($user->isLoggedIn()) {
 											<?php if($request['quotation_it_status'] == 1 && $request['quotation_it_manager_status']==0){?>
 												<a href="info.php?id=19&rid=<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Approve Quotation</a>
 											<?php }?>
+
+                                            <?php if($request['quotation_it_status'] == 1){?>
+                                                <a href="info.php?id=10&rid=<?=$request['id']?>" role="button" class="btn btn-info" >Quotations</a>
+                                            <?php }?>
                                             
 											<a href="#specsView<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">View Specs</a>
                                         </td>
@@ -2342,7 +2351,7 @@ if ($user->isLoggedIn()) {
 											<?php if($request['ce_approval'] == 1 && $request['head_unit_status'] == 0){?>
 												<a href="#unitHeadApprove<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Approve</a>
 											<?php }else{?>
-												<a href="#unitHeadCE<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Request CE Approval</a>
+												<a href="#unitHeadCE<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Request CE Approval</a>
 											<?php }?>
                                         </td>
                                     </tr>
@@ -2470,7 +2479,7 @@ if ($user->isLoggedIn()) {
 										</td>
                                         
                                         <td>
-											<a href="#CEApprove<?=$request['id']?>" role="button" class="btn btn-info" data-toggle="modal">Approve</a>
+											<a href="#CEApprove<?=$request['id']?>" role="button" class="btn btn-warning" data-toggle="modal">Approve</a>
                                         </td>
                                     </tr>
 									<div class="modal fade" id="CEApprove<?=$request['id']?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -2792,7 +2801,7 @@ if ($user->isLoggedIn()) {
                                     <tr>
                                         <td> <?= $quotation['name'] ?></td>
                                         <td><?=$quotation['quotations']?></td>
-                                        <td><a href="download.php?file=<?=$quotation['quotations']?>" target="_blank" class="btn btn-info">Download</a></td>
+                                        <td><a href="download.php?file=<?=$quotation['quotations']?>" target="_blank" class="btn btn-info">View</a></td>
                                         <!-- EOF Bootrstrap modal form -->
                                     </tr>
                                     
@@ -3048,6 +3057,10 @@ if ($user->isLoggedIn()) {
 										<td><?=$request['request_no']?></td>
 										<td><?=$specsOfficer?></td>
 										<td>
+
+                                            <?php if($request['config_status'] == 1 && $request['logistic_status'] == 0){?>
+                                                <a href="info.php?id=16&rid=<?=$request['id']?>" class="btn btn-warning" >Asset Transfer </a>
+                                            <?php } ?>
 											
 											<?php if($request['quotations_status'] == 1){?>
 												<a href="download.php?file=<?=$quatation?>" class="btn btn-info" target="_blamk" >Quotation</a>
@@ -3055,11 +3068,7 @@ if ($user->isLoggedIn()) {
 											<?php if($request['pmu_receive_status'] == 1){?>
 												<a href="download.php?file=<?=$delivery?>" class="btn btn-info" target="_blamk" >Delivery Note</a>
 											<?php } ?>
-											
-											<?php if($request['config_status'] == 1 && $request['logistic_status'] == 0){?>
-												<a href="info.php?id=16&rid=<?=$request['id']?>" class="btn btn-warning" >Asset Transfer </a>
-											<?php } ?>
-											
+
 										</td>
 									</tr>
 								
@@ -3287,7 +3296,7 @@ if ($user->isLoggedIn()) {
 								<div class="row-form clearfix">
 									<div class="col-md-12">
 										<div class="form-group" style="margin-top: 5px;">
-											<label class="checkbox">Have you recieve the new Asset from logistic?</label>
+											<label class="checkbox">Have you receive the new Asset from logistic?</label>
 										</div>
 										<div class="form-group" style="margin-top: 5px;">
 											<input name="recieve_asset" type="radio" value="1"> Yes <input name="recieve_asset" type="radio" value="2" checked> No
